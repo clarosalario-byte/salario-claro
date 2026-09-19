@@ -9,6 +9,14 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; frame-ancestors 'none'
 
+# Never let the Cloudflare Pages preview domain get indexed — the real
+# production domain (salarioclaro.com) is the only one that should show up
+# in search results. This is a true HTTP header sent by Cloudflare's edge
+# before any HTML/JS is even parsed, so it also catches crawlers that don't
+# execute JavaScript.
+https://salario-claro.pages.dev/*
+  X-Robots-Tag: noindex
+
 # Static assets can be cached aggressively — filenames are content-hashed by Astro's build.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable
