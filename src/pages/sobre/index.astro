@@ -1,0 +1,84 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { organizationRef, breadcrumbSchema } from '../../lib/seo/schema';
+
+const title = 'Sobre o Salário Claro | Calculadoras de Salário Transparentes';
+const description =
+  'Conheça o Salário Claro: por que criamos calculadoras de salário transparentes para o Brasil, como mantemos as regras atualizadas e o que vem a seguir.';
+
+const aboutSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: title,
+  description,
+  about: organizationRef(),
+};
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Sobre', path: '/sobre/' },
+]);
+---
+<Layout title={title} description={description} path="/sobre/" structuredData={[aboutSchema, breadcrumb]}>
+  <article class="mx-auto max-w-2xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Sobre o Salário Claro</h1>
+    <p class="mt-3 text-ink-soft">Por que criamos uma calculadora que mostra o cálculo inteiro, não só o resultado.</p>
+
+    <div class="prose-custom mt-10 space-y-8 text-ink">
+      <section>
+        <h2 class="font-display text-xl font-semibold">Por que existimos</h2>
+        <p class="mt-2 text-ink-soft">
+          A maioria das calculadoras de salário mostra um número e ponto final. Você digita o
+          salário bruto, recebe um valor líquido, e não tem como saber se está certo, nem por quê.
+          O Salário Claro nasceu para resolver exatamente isso: mostrar cada faixa de INSS, cada
+          dedução considerada no IRRF, e a redução de 2026 aplicada passo a passo, para que o
+          resultado faça sentido em vez de exigir confiança cega.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Como mantemos as regras corretas</h2>
+        <p class="mt-2 text-ink-soft">
+          Cada número usado na calculadora (as faixas de INSS, a tabela de IRRF, a redução da Lei
+          15.270/2025) vem diretamente de fontes oficiais: Receita Federal, Ministério da
+          Previdência e o texto da lei no Diário Oficial da União. Não copiamos valores de outras
+          calculadoras. Quando a legislação muda, atualizamos a tabela correspondente e o resultado
+          dos testes automatizados que validam cada cálculo contra exemplos oficiais publicados
+          pela própria Receita Federal. Os detalhes completos, com links para cada fonte, estão em
+          <a href="/como-calculamos/" class="text-ink underline hover:text-accent-ink">Como calculamos</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">O que o Salário Claro não é</h2>
+        <p class="mt-2 text-ink-soft">
+          Não somos um órgão do governo, não somos um escritório de contabilidade, e não emitimos
+          documentos oficiais. Os resultados são estimativas, úteis para planejamento, comparação
+          de propostas de emprego e para entender o próprio holerite, mas não um substituto para a
+          folha de pagamento oficial da sua empresa ou para o conselho de um profissional de
+          contabilidade em casos específicos.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">O que vem a seguir</h2>
+        <p class="mt-2 text-ink-soft">
+          A calculadora de salário líquido é o primeiro passo. A arquitetura por trás dela foi
+          construída para crescer: outras calculadoras de folha de pagamento (proporcional, por
+          hora, férias, 13º salário, rescisão, FGTS) só serão publicadas quando sua lógica de
+          cálculo estiver implementada e validada com a mesma exigência, nunca como uma página
+          vazia esperando conteúdo.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Fale conosco</h2>
+        <p class="mt-2 text-ink-soft">
+          Encontrou um número que parece errado? É exatamente esse tipo de retorno que nos ajuda a
+          manter a calculadora confiável. Veja como entrar em contato na
+          <a href="/contato/" class="text-ink underline hover:text-accent-ink">página de contato</a>.
+        </p>
+      </section>
+    </div>
+  </article>
+</Layout>

@@ -1,0 +1,65 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { breadcrumbSchema } from '../../lib/seo/schema';
+
+const title = 'Termos de Uso das Calculadoras do Salário Claro';
+const description =
+  'Termos de uso das calculadoras do Salário Claro: o que os resultados representam, seus limites, e o que esperar do serviço.';
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Termos', path: '/termos/' },
+]);
+---
+<Layout title={title} description={description} path="/termos/" structuredData={[breadcrumb]}>
+  <article class="mx-auto max-w-2xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Termos de uso</h1>
+    <p class="mt-3 text-ink-soft">Em linguagem simples: o que você pode esperar do Salário Claro.</p>
+
+    <div class="prose-custom mt-10 space-y-8 text-ink">
+      <section>
+        <h2 class="font-display text-xl font-semibold">O que oferecemos</h2>
+        <p class="mt-2 text-ink-soft">
+          Calculadoras gratuitas de estimativa de salário e folha de pagamento, sem necessidade de
+          cadastro. Você pode usar quantas vezes quiser, sem limite.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">O que os resultados representam</h2>
+        <p class="mt-2 text-ink-soft">
+          Os resultados são estimativas baseadas nas regras gerais de INSS e IRRF vigentes. Eles não
+          substituem o holerite oficial emitido pela sua empresa, nem a orientação de um profissional
+          de contabilidade para a sua situação específica.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">O que pode gerar diferenças</h2>
+        <p class="mt-2 text-ink-soft">
+          Convenções coletivas de categoria, benefícios específicos da sua empresa, e situações
+          tributárias particulares podem fazer seu holerite real diferir do resultado da calculadora.
+          A página <a href="/como-calculamos/" class="text-ink underline hover:text-accent-ink">Como calculamos</a>
+          lista exatamente o que está e o que não está coberto.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Atualizações das regras</h2>
+        <p class="mt-2 text-ink-soft">
+          Atualizamos as tabelas de cálculo sempre que a legislação de INSS ou IRRF muda. A data da
+          última verificação de cada regra é exibida na própria calculadora e na página de
+          metodologia.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Dúvidas</h2>
+        <p class="mt-2 text-ink-soft">
+          Perguntas sobre estes termos podem ser enviadas pela
+          <a href="/contato/" class="text-ink underline hover:text-accent-ink">página de contato</a>.
+        </p>
+      </section>
+    </div>
+  </article>
+</Layout>

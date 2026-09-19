@@ -1,0 +1,107 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { organizationRef, breadcrumbSchema, SITE_URL } from '../../lib/seo/schema';
+
+const title = 'Calculadoras de Salário e Folha de Pagamento | Salário Claro';
+const description =
+  'Calculadoras gratuitas de salário para o Brasil: salário líquido, proporcional, por hora, dias trabalhados, INSS e IRRF, com as regras vigentes.';
+
+interface CalcCard {
+  name: string;
+  path?: string;
+  blurb: string;
+}
+
+const live: CalcCard[] = [
+  {
+    name: 'Salário Líquido',
+    path: '/calculadoras/salario-liquido/',
+    blurb: 'Salário bruto → líquido, com INSS, IRRF e a redução de 2026 explicados faixa por faixa.',
+  },
+  {
+    name: 'Salário Proporcional',
+    path: '/calculadoras/salario-proporcional/',
+    blurb: 'Quanto receber por um mês incompleto: admissão, demissão ou afastamento no meio do mês.',
+  },
+  {
+    name: 'Salário por Hora',
+    path: '/calculadoras/salario-por-hora/',
+    blurb: 'Converte salário mensal em valor da hora (e vice-versa), com o divisor correto pela sua jornada.',
+  },
+  {
+    name: 'Salário por Dias Trabalhados',
+    path: '/calculadoras/dias-trabalhados/',
+    blurb: 'Quanto você recebe por um número específico de dias trabalhados no mês.',
+  },
+  {
+    name: 'INSS',
+    path: '/calculadoras/inss/',
+    blurb: 'Contribuição previdenciária isolada, faixa por faixa, com a tabela de 2026.',
+  },
+  {
+    name: 'IRRF',
+    path: '/calculadoras/irrf/',
+    blurb: 'Imposto de renda retido na fonte, com a redução de 2026 e as deduções legais.',
+  },
+  {
+    name: 'Férias',
+    path: '/calculadoras/ferias/',
+    blurb: 'Remuneração de férias com o terço constitucional, abono pecuniário, INSS e IRRF.',
+  },
+  {
+    name: '13º Salário',
+    path: '/calculadoras/13-salario/',
+    blurb: 'Décimo terceiro proporcional aos meses trabalhados, com as duas parcelas.',
+  },
+  {
+    name: 'FGTS',
+    path: '/calculadoras/fgts/',
+    blurb: 'Depósito mensal de 8% e multa rescisória (40% ou 20%).',
+  },
+  {
+    name: 'Rescisão CLT',
+    path: '/calculadoras/rescisao/',
+    blurb: 'Verbas rescisórias por tipo de desligamento: saldo, aviso prévio, férias, 13º e FGTS.',
+  },
+];
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Calculadoras', path: '/calculadoras/' },
+]);
+
+const collectionSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: title,
+  description,
+  url: `${SITE_URL}/calculadoras/`,
+  about: organizationRef(),
+};
+---
+<Layout title={title} description={description} path="/calculadoras/" structuredData={[collectionSchema, breadcrumb]}>
+  <section class="mx-auto max-w-5xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Calculadoras de salário</h1>
+    <p class="mt-3 max-w-2xl text-ink-soft">
+      Cada calculadora abaixo mostra o cálculo completo, não só o resultado final, com as regras
+      de 2026 verificadas contra fontes oficiais.
+    </p>
+
+    <div class="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {
+        live.map((calc) => (
+          <a href={calc.path} class="card-premium block rounded-xl p-5 transition-transform hover:-translate-y-0.5">
+            <p class="font-display text-lg font-semibold text-ink">{calc.name}</p>
+            <p class="mt-1.5 text-sm text-ink-soft">{calc.blurb}</p>
+          </a>
+        ))
+      }
+    </div>
+
+    <p class="mt-10 text-sm text-ink-soft">
+      Essas são as 10 calculadoras do primeiro lote do Salário Claro, todas com cálculo
+      implementado e validado, nenhuma como página vazia. Fontes e metodologia completas em
+      <a href="/como-calculamos/" class="text-ink underline hover:text-accent-ink">Como calculamos</a>.
+    </p>
+  </section>
+</Layout>

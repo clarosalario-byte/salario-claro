@@ -1,0 +1,6 @@
+# Netlify / Cloudflare Pages redirect syntax.
+# Preserves SEO equity from the old calculator URL (pre-hub restructure).
+# NOTE: astro.config.mjs already emits a static meta-refresh redirect page
+# for this same path for any static host that doesn't read this file — this
+# gives a true HTTP 301 wherever the hosting platform supports it instead.
+/calculadora-salario-liquido/  /calculadoras/salario-liquido/  301

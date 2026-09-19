@@ -1,0 +1,58 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { organizationRef, breadcrumbSchema } from '../../lib/seo/schema';
+
+const title = 'Contato do Salário Claro: Dúvidas e Suporte';
+const description =
+  'Fale com o Salário Claro: relate uma divergência de cálculo, tire dúvidas sobre a metodologia ou envie sugestões.';
+
+const contactSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: title,
+  description,
+  about: organizationRef(),
+};
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Contato', path: '/contato/' },
+]);
+---
+<Layout title={title} description={description} path="/contato/" structuredData={[contactSchema, breadcrumb]}>
+  <article class="mx-auto max-w-2xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Contato</h1>
+    <p class="mt-3 text-ink-soft">
+      Escreva para <a href="mailto:contact@salarioclaro.com" class="text-ink underline hover:text-accent-ink">contact@salarioclaro.com</a>.
+      Respondemos o mais rápido possível, geralmente em até 2 dias úteis.
+    </p>
+
+    <div class="prose-custom mt-10 space-y-6 text-ink">
+      <section>
+        <h2 class="font-display text-lg font-semibold">Encontrou uma divergência de cálculo?</h2>
+        <p class="mt-2 text-ink-soft">
+          Este é o retorno mais valioso que podemos receber. Inclua, se possível: o salário bruto
+          usado, o número de dependentes, outros valores informados (pensão, outros descontos) e o
+          valor que você esperava receber, com a fonte da sua referência (holerite, outra
+          calculadora, tabela oficial). Investigamos toda divergência relatada.
+        </p>
+      </section>
+      <section>
+        <h2 class="font-display text-lg font-semibold">Dúvidas sobre metodologia</h2>
+        <p class="mt-2 text-ink-soft">
+          Se algo na página
+          <a href="/como-calculamos/" class="text-ink underline hover:text-accent-ink">Como calculamos</a>
+          não ficou claro, pergunte. Preferimos explicar melhor a deixar alguém sem entender de onde
+          veio um número.
+        </p>
+      </section>
+      <section>
+        <h2 class="font-display text-lg font-semibold">Sugestões e novas calculadoras</h2>
+        <p class="mt-2 text-ink-soft">
+          Tem uma calculadora de folha de pagamento que sente falta? Conte para nós, isso ajuda a
+          priorizar o que construir a seguir.
+        </p>
+      </section>
+    </div>
+  </article>
+</Layout>

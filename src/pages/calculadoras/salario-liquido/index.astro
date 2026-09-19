@@ -1,0 +1,452 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ResultActions from '../../../components/ResultActions.astro';
+import AllCalculatorsNav from '../../../components/AllCalculatorsNav.astro';
+import { RULES_2026 } from '../../../lib/calculations/salary';
+import { organizationRef, breadcrumbSchema, SITE_URL } from '../../../lib/seo/schema';
+
+const title = 'Calculadora de Salário Líquido: Calcule Quanto Você Vai Receber';
+const description =
+  'Calculadora de salário líquido: salário bruto, INSS, dependentes e IRRF com a redução da Lei 15.270/2025. Veja o cálculo detalhado, faixa por faixa.';
+
+const lastVerified = new Date(RULES_2026.lastVerified).toLocaleDateString('pt-BR', {
+  day: '2-digit',
+  month: 'long',
+  year: 'numeric',
+});
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${SITE_URL}/calculadoras/salario-liquido/#webapplication`,
+  name: 'Calculadora de Salário Líquido 2026',
+  url: `${SITE_URL}/calculadoras/salario-liquido/`,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any (navegador web)',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+  publisher: organizationRef(),
+};
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Calculadora de Salário Líquido', path: '/calculadoras/salario-liquido/' },
+]);
+---
+
+<Layout
+  title={title}
+  description={description}
+  path="/calculadoras/salario-liquido/"
+  structuredData={[webAppSchema, breadcrumb]}
+>
+  <section class="mx-auto max-w-3xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">
+      Calculadora de salário líquido
+    </h1>
+    <p class="mt-3 text-ink-soft">
+      Preencha seu salário bruto para ver o cálculo completo: INSS, IRRF e a redução de 2026,
+      explicados faixa por faixa.
+    </p>
+    <p class="mt-2 text-xs text-ink-soft">
+      Regras utilizadas: 2026 · Última atualização das regras: {lastVerified}
+    </p>
+
+    <form id="calc-form" class="card-premium mt-8 space-y-5 rounded-xl p-6" novalidate>
+      <div>
+        <label for="grossSalary" class="block text-sm font-medium text-ink">Salário bruto</label>
+        <div class="mt-1.5 flex items-center rounded-md border border-line focus-within:border-ink">
+          <span class="pl-3 text-ink-soft">R$</span>
+          <input
+            type="text"
+            inputmode="decimal"
+            id="grossSalary"
+            name="grossSalary"
+            placeholder="3.000,00"
+            class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none"
+            aria-describedby="grossSalary-error"
+            required
+          />
+        </div>
+        <p id="grossSalary-error" class="mt-1 text-sm text-bad" role="alert"></p>
+      </div>
+
+      <div>
+        <label for="dependents" class="block text-sm font-medium text-ink">Número de dependentes</label>
+        <input
+          type="number"
+          id="dependents"
+          name="dependents"
+          min="0"
+          step="1"
+          value="0"
+          class="mt-1.5 w-32 rounded-md border border-line px-3 py-2.5 outline-none focus:border-ink"
+          aria-describedby="dependents-error"
+        />
+        <p id="dependents-error" class="mt-1 text-sm text-bad" role="alert"></p>
+      </div>
+
+      <div>
+        <label for="otherDeductions" class="block text-sm font-medium text-ink">Outros descontos</label>
+        <div class="mt-1.5 flex items-center rounded-md border border-line focus-within:border-ink">
+          <span class="pl-3 text-ink-soft">R$</span>
+          <input
+            type="text"
+            inputmode="decimal"
+            id="otherDeductions"
+            name="otherDeductions"
+            placeholder="0,00"
+            class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none"
+            aria-describedby="otherDeductions-error"
+          />
+        </div>
+        <p id="otherDeductions-error" class="mt-1 text-sm text-bad" role="alert"></p>
+        <p class="mt-1 text-xs text-ink-soft">
+          Valores como vale-transporte ou plano de saúde que você já sabe que serão descontados.
+          Não alteram o cálculo do IRRF, apenas o valor final que cai na sua conta.
+        </p>
+      </div>
+
+      <details class="rounded-md border border-line p-4">
+        <summary class="cursor-pointer select-none text-sm font-medium text-ink">Mais opções</summary>
+        <div class="mt-4">
+          <label for="alimony" class="block text-sm font-medium text-ink">Pensão alimentícia</label>
+          <div class="mt-1.5 flex max-w-xs items-center rounded-md border border-line focus-within:border-ink">
+            <span class="pl-3 text-ink-soft">R$</span>
+            <input
+              type="text"
+              inputmode="decimal"
+              id="alimony"
+              name="alimony"
+              placeholder="0,00"
+              class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none"
+              aria-describedby="alimony-error"
+            />
+          </div>
+          <p id="alimony-error" class="mt-1 text-sm text-bad" role="alert"></p>
+          <p class="mt-1 text-xs text-ink-soft">
+            Pensão alimentícia é uma dedução legal: reduz a base de cálculo do IRRF, além de sair
+            do salário líquido.
+          </p>
+        </div>
+      </details>
+
+      <div class="flex flex-wrap gap-3 pt-2">
+        <button
+          type="submit"
+          class="btn-primary rounded-md px-6 py-2.5 text-sm font-medium"
+        >
+          Calcular salário líquido
+        </button>
+        <button
+          type="button"
+          id="reset-btn"
+          class="btn-outline rounded-md px-6 py-2.5 text-sm font-medium"
+        >
+          Limpar cálculo
+        </button>
+      </div>
+    </form>
+
+    <p class="mt-3 text-xs text-ink-soft">
+      Seus valores são calculados no navegador e não precisam ser enviados para um servidor.
+    </p>
+
+    <div id="result" class="mt-8 hidden" aria-live="polite">
+      <div class="card-premium rounded-xl p-6">
+        <p class="text-sm text-ink-soft">Seu salário líquido estimado</p>
+        <p id="result-net" class="mt-1 font-display text-4xl font-semibold tabular-money text-ink"></p>
+
+        <dl class="mt-6 divide-y divide-line border-t border-line text-sm">
+          <div class="flex justify-between py-2">
+            <dt class="text-ink-soft">Salário bruto</dt>
+            <dd id="result-gross" class="tabular-money text-ink"></dd>
+          </div>
+          <div class="flex justify-between py-2">
+            <dt class="text-ink-soft">INSS</dt>
+            <dd id="result-inss" class="tabular-money text-bad"></dd>
+          </div>
+          <div class="flex justify-between py-2">
+            <dt class="text-ink-soft">IRRF</dt>
+            <dd id="result-irrf" class="tabular-money text-bad"></dd>
+          </div>
+          <div id="result-other-row" class="hidden justify-between py-2">
+            <dt class="text-ink-soft">Outros descontos</dt>
+            <dd id="result-other" class="tabular-money text-bad"></dd>
+          </div>
+          <div id="result-alimony-row" class="hidden justify-between py-2">
+            <dt class="text-ink-soft">Pensão alimentícia</dt>
+            <dd id="result-alimony" class="tabular-money text-bad"></dd>
+          </div>
+          <div class="flex justify-between py-2 font-medium">
+            <dt class="text-ink">Salário líquido</dt>
+            <dd id="result-net-2" class="tabular-money text-ink"></dd>
+          </div>
+        </dl>
+
+        <details class="mt-6 rounded-md border border-line p-4">
+          <summary class="cursor-pointer select-none text-sm font-medium text-ink">Ver cálculo detalhado</summary>
+          <div id="result-detail" class="mt-4 space-y-6 text-sm"></div>
+        </details>
+
+        <ResultActions />
+
+        <p class="mt-6 text-xs text-ink-soft">
+          Este cálculo é uma estimativa e não substitui o holerite oficial ou a orientação de um
+          profissional de contabilidade.
+        </p>
+      </div>
+    </div>
+
+    <AllCalculatorsNav currentPath="/calculadoras/salario-liquido/" />
+  </section>
+</Layout>
+
+<script>
+  import { calculateSalary, validateSalaryInput, formatBRL } from '../../../lib/calculations/salary';
+  import { downloadResultImage, copyResultText, shareResult, flashButtonText, type ResultRow } from '../../../lib/ui/resultActions';
+
+  const form = document.getElementById('calc-form') as HTMLFormElement;
+  const resultEl = document.getElementById('result') as HTMLDivElement;
+
+  function parseBRLNumber(raw: string): number {
+    if (!raw || raw.trim() === '') return 0;
+    // Accept "1.234,56", "1234,56", "1234.56", "1234"
+    const cleaned = raw.replace(/\s/g, '');
+    const hasComma = cleaned.includes(',');
+    const normalized = hasComma
+      ? cleaned.replace(/\./g, '').replace(',', '.')
+      : cleaned;
+    const value = parseFloat(normalized);
+    return Number.isNaN(value) ? NaN : value;
+  }
+
+  function clearErrors() {
+    document.querySelectorAll('[role="alert"]').forEach((el) => (el.textContent = ''));
+  }
+
+  function showFieldErrors(errors: { field: string; message: string }[]) {
+    for (const err of errors) {
+      const el = document.getElementById(`${err.field}-error`);
+      if (el) el.textContent = err.message;
+    }
+  }
+
+  function renderDetail(result: ReturnType<typeof calculateSalary>) {
+    const detail = document.getElementById('result-detail')!;
+    const { inss, irpf } = result;
+
+    const inssRows = inss.brackets
+      .map(
+        (b) => `
+        <tr class="border-t border-line">
+          <td class="py-1.5 pr-3">${formatBRL(b.from)} – ${b.to === Infinity ? '∞' : formatBRL(b.to)}</td>
+          <td class="py-1.5 pr-3 text-right">${(b.rate * 100).toLocaleString('pt-BR')}%</td>
+          <td class="py-1.5 pr-3 text-right tabular-money">${formatBRL(b.taxableSlice)}</td>
+          <td class="py-1.5 text-right tabular-money">${formatBRL(b.amount)}</td>
+        </tr>`
+      )
+      .join('');
+
+    const deductionLabel =
+      irpf.deductionMethodUsed === 'simplified'
+        ? `Desconto simplificado (${formatBRL(irpf.simplifiedDeduction)})`
+        : `Deduções legais (${formatBRL(irpf.legalDeductions.total)}: INSS ${formatBRL(
+            irpf.legalDeductions.inss
+          )} + dependentes ${formatBRL(irpf.legalDeductions.dependents)} + pensão ${formatBRL(
+            irpf.legalDeductions.alimony
+          )})`;
+
+    detail.innerHTML = `
+      <div>
+        <p class="font-medium text-ink">INSS: cálculo progressivo por faixa</p>
+        <div class="mt-2 -mx-1 overflow-x-auto px-1">
+        <table class="w-full min-w-[420px] text-xs">
+          <thead>
+            <tr class="text-left text-ink-soft">
+              <th class="pb-1 font-normal">Faixa</th>
+              <th class="pb-1 pr-3 text-right font-normal">Alíquota</th>
+              <th class="pb-1 pr-3 text-right font-normal">Base considerada</th>
+              <th class="pb-1 text-right font-normal">Valor</th>
+            </tr>
+          </thead>
+          <tbody>${inssRows}</tbody>
+        </table>
+        </div>
+      </div>
+      <div>
+        <p class="font-medium text-ink">IRRF: passo a passo</p>
+        <dl class="mt-2 space-y-1.5 text-xs">
+          <div class="flex justify-between"><dt class="text-ink-soft">1. Salário bruto</dt><dd class="tabular-money">${formatBRL(result.input.grossSalary)}</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-soft">2. Dedução utilizada</dt><dd class="tabular-money text-right">${deductionLabel}</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-soft">3. Base de cálculo do IRRF</dt><dd class="tabular-money">${formatBRL(irpf.calculationBase)}</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-soft">4. Alíquota da faixa (tabela progressiva)</dt><dd class="tabular-money">${(irpf.bracket.rate * 100).toLocaleString('pt-BR')}%</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-soft">5. IRRF antes da redução</dt><dd class="tabular-money">${formatBRL(irpf.taxBeforeReduction)}</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-soft">6. Redução (Lei 15.270/2025)</dt><dd class="tabular-money">− ${formatBRL(irpf.reduction)}</dd></div>
+          <div class="flex justify-between font-medium text-ink"><dt>7. IRRF final</dt><dd class="tabular-money">${formatBRL(irpf.finalTax)}</dd></div>
+        </dl>
+      </div>
+    `;
+  }
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    clearErrors();
+
+    const grossSalary = parseBRLNumber((document.getElementById('grossSalary') as HTMLInputElement).value);
+    const dependents = parseInt((document.getElementById('dependents') as HTMLInputElement).value || '0', 10);
+    const otherDeductions = parseBRLNumber(
+      (document.getElementById('otherDeductions') as HTMLInputElement).value
+    );
+    const alimony = parseBRLNumber((document.getElementById('alimony') as HTMLInputElement).value);
+
+    runCalculation({ grossSalary, dependents, otherDeductions, alimony }, true);
+  });
+
+  let lastResult: ReturnType<typeof calculateSalary> | null = null;
+
+  function runCalculation(
+    input: { grossSalary: number; dependents: number; otherDeductions: number; alimony: number },
+    scroll: boolean
+  ) {
+    const validation = validateSalaryInput(input);
+    if (!validation.valid) {
+      showFieldErrors(validation.errors);
+      resultEl.classList.add('hidden');
+      return;
+    }
+
+    const result = calculateSalary(input);
+    lastResult = result;
+
+    (document.getElementById('result-net') as HTMLElement).textContent = formatBRL(result.netSalary);
+    (document.getElementById('result-net-2') as HTMLElement).textContent = formatBRL(result.netSalary);
+    (document.getElementById('result-gross') as HTMLElement).textContent = formatBRL(
+      result.input.grossSalary
+    );
+    (document.getElementById('result-inss') as HTMLElement).textContent = `− ${formatBRL(result.inss.total)}`;
+    (document.getElementById('result-irrf') as HTMLElement).textContent = `− ${formatBRL(
+      result.irpf.finalTax
+    )}`;
+
+    const otherRow = document.getElementById('result-other-row')!;
+    if (result.otherDeductions > 0) {
+      otherRow.classList.remove('hidden');
+      otherRow.classList.add('flex');
+      (document.getElementById('result-other') as HTMLElement).textContent = `− ${formatBRL(
+        result.otherDeductions
+      )}`;
+    } else {
+      otherRow.classList.add('hidden');
+    }
+
+    const alimonyRow = document.getElementById('result-alimony-row')!;
+    if (result.input.alimony > 0) {
+      alimonyRow.classList.remove('hidden');
+      alimonyRow.classList.add('flex');
+      (document.getElementById('result-alimony') as HTMLElement).textContent = `− ${formatBRL(
+        result.input.alimony
+      )}`;
+    } else {
+      alimonyRow.classList.add('hidden');
+    }
+
+    renderDetail(result);
+
+    resultEl.classList.remove('hidden');
+    if (scroll) resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  // --- Auto-load a shared calculation from URL params (?b=&d=&o=&p=) ---
+  (function loadFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('b')) return;
+
+    const grossSalary = parseFloat(params.get('b') ?? '');
+    const dependents = parseInt(params.get('d') ?? '0', 10);
+    const otherDeductions = parseFloat(params.get('o') ?? '0');
+    const alimony = parseFloat(params.get('p') ?? '0');
+    if (Number.isNaN(grossSalary)) return;
+
+    (document.getElementById('grossSalary') as HTMLInputElement).value = grossSalary
+      .toFixed(2)
+      .replace('.', ',');
+    (document.getElementById('dependents') as HTMLInputElement).value = String(dependents || 0);
+    if (otherDeductions > 0) {
+      (document.getElementById('otherDeductions') as HTMLInputElement).value = otherDeductions
+        .toFixed(2)
+        .replace('.', ',');
+    }
+    if (alimony > 0) {
+      (document.getElementById('alimony') as HTMLInputElement).value = alimony.toFixed(2).replace('.', ',');
+      const details = document.querySelector('details');
+      if (details) details.open = true;
+    }
+
+    runCalculation(
+      { grossSalary, dependents: Number.isNaN(dependents) ? 0 : dependents, otherDeductions, alimony },
+      true
+    );
+  })();
+
+  document.getElementById('reset-btn')?.addEventListener('click', () => {
+    form.reset();
+    clearErrors();
+    resultEl.classList.add('hidden');
+    lastResult = null;
+    history.replaceState(null, '', window.location.pathname);
+  });
+
+  document.getElementById('action-print')?.addEventListener('click', () => {
+    window.print();
+  });
+
+  document.getElementById('action-copy')?.addEventListener('click', async (e) => {
+    if (!lastResult) return;
+    const ok = await copyResultText([
+      `Salário bruto: ${formatBRL(lastResult.input.grossSalary)}`,
+      `INSS: − ${formatBRL(lastResult.inss.total)}`,
+      `IRRF: − ${formatBRL(lastResult.irpf.finalTax)}`,
+      `Salário líquido: ${formatBRL(lastResult.netSalary)}`,
+    ]);
+    if (ok) flashButtonText(e.currentTarget as HTMLButtonElement, 'Copiado!');
+  });
+
+  document.getElementById('action-share')?.addEventListener('click', async (e) => {
+    if (!lastResult) return;
+    const outcome = await shareResult(
+      {
+        b: lastResult.input.grossSalary,
+        d: lastResult.input.dependents,
+        o: lastResult.input.otherDeductions,
+        p: lastResult.input.alimony,
+      },
+      `Meu salário líquido estimado: ${formatBRL(lastResult.netSalary)}, calculado no Salário Claro`
+    );
+    if (outcome === 'copied') flashButtonText(e.currentTarget as HTMLButtonElement, 'Link copiado!');
+  });
+
+  document.getElementById('action-download')?.addEventListener('click', () => {
+    if (!lastResult) return;
+    const r = lastResult;
+    const rows: ResultRow[] = [
+      { label: 'Salário bruto', value: formatBRL(r.input.grossSalary) },
+      { label: 'INSS', value: `− ${formatBRL(r.inss.total)}`, color: '#b3401f' },
+      { label: 'IRRF', value: `− ${formatBRL(r.irpf.finalTax)}`, color: '#b3401f' },
+    ];
+    if (r.otherDeductions > 0) {
+      rows.push({ label: 'Outros descontos', value: `− ${formatBRL(r.otherDeductions)}`, color: '#b3401f' });
+    }
+    if (r.input.alimony > 0) {
+      rows.push({ label: 'Pensão alimentícia', value: `− ${formatBRL(r.input.alimony)}`, color: '#b3401f' });
+    }
+    rows.push({ label: 'Salário líquido', value: formatBRL(r.netSalary), emphasis: true });
+
+    downloadResultImage({
+      title: 'Salário líquido estimado',
+      bigValue: formatBRL(r.netSalary),
+      badge: 'Regras 2026',
+      rows,
+      filename: 'salario-liquido-salarioclaro',
+    });
+  });
+</script>

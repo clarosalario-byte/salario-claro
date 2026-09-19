@@ -1,0 +1,290 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Path only, e.g. "/calculadoras/salario-liquido/" — canonical is built from Astro.site. */
+  path: string;
+  /** Extra JSON-LD objects to inject (WebApplication, FAQPage, BreadcrumbList, etc.) */
+  structuredData?: Record<string, unknown>[];
+  /** Social share image path, relative to site root. Defaults to the brand OG image. */
+  ogImage?: string;
+  /** Set to "noindex, nofollow" on error pages (404/500) so they never get indexed. */
+  robots?: string;
+}
+
+const {
+  title,
+  description,
+  path,
+  structuredData = [],
+  ogImage = '/og-image.png',
+  robots = 'index, follow',
+} = Astro.props;
+const canonicalURL = new URL(path, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
+
+const allSchemas = structuredData;
+---
+
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content={robots} />
+
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#10192e" />
+
+    <meta name="generator" content={Astro.generator} />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:site_name" content="Salário Claro" />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Salário Claro: Calculadora de Salário Líquido" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    {
+      allSchemas.map((schema) => (
+        <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+      ))
+    }
+
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-J4CEKV4K97"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'G-J4CEKV4K97');
+    </script>
+
+    <script is:inline>
+      // Runs before first paint to avoid a flash of the wrong theme.
+      // Preference order: explicit choice saved by the user > OS preference.
+      // Also strips the no-js fallback class so [data-reveal] elements (which
+      // are hidden until scrolled into view) don't stay permanently invisible
+      // when JS actually is available.
+      (function () {
+        document.documentElement.classList.remove('no-js');
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = stored ? stored === 'dark' : prefersDark;
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (e) {
+          /* localStorage unavailable (e.g. private browsing) — default to light. */
+        }
+      })();
+    </script>
+  </head>
+  <body class="flex min-h-dvh flex-col bg-paper text-ink">
+    <a
+      href="#conteudo"
+      class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
+    >
+      Pular para o conteúdo
+    </a>
+
+    <header class="border-b border-line bg-paper-raised">
+      <div class="flex items-center justify-between px-6 py-4">
+        <a href="/" class="flex items-baseline gap-2">
+          <span class="font-display text-lg font-semibold text-ink">Salário Claro</span>
+        </a>
+        <nav aria-label="Navegação principal" class="hidden items-center gap-5 text-sm text-ink-soft lg:flex">
+          <a href="/calculadoras/" class="hover:text-ink">Calculadoras</a>
+          <a href="/como-calculamos/" class="hover:text-ink">Como calculamos</a>
+          <a href="/sobre/" class="hover:text-ink">Sobre</a>
+          <a href="/contato/" class="hover:text-ink">Contato</a>
+          <a href="/privacidade/" class="hover:text-ink">Privacidade</a>
+          <a href="/termos/" class="hover:text-ink">Termos</a>
+          <button
+            type="button"
+            id="theme-toggle"
+            aria-label="Alternar tema claro/escuro"
+            aria-pressed="false"
+            class="flex h-9 w-9 items-center justify-center rounded-md border border-line text-ink-soft transition-colors hover:border-ink hover:text-ink"
+          >
+            <svg id="theme-icon-sun" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+            </svg>
+            <svg id="theme-icon-moon" class="hidden h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+            </svg>
+          </button>
+        </nav>
+        <div class="flex items-center gap-2 lg:hidden">
+          <button
+            type="button"
+            id="theme-toggle-mobile"
+            aria-label="Alternar tema claro/escuro"
+            aria-pressed="false"
+            class="flex h-9 w-9 items-center justify-center rounded-md border border-line text-ink-soft"
+          >
+            <svg class="theme-icon-sun h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+            </svg>
+            <svg class="theme-icon-moon hidden h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
+            </svg>
+          </button>
+          <a
+            href="/calculadoras/salario-liquido/"
+            class="btn-primary rounded-md px-4 py-2 text-sm font-medium"
+          >
+            Calcular
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main id="conteudo" class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="no-print border-t border-line bg-paper-raised">
+      <div class="mx-auto max-w-5xl px-5 py-10 text-sm text-ink-soft">
+        <div class="grid gap-8 sm:grid-cols-3">
+          <div>
+            <p class="font-display text-base font-semibold text-ink">Salário Claro</p>
+            <p class="mt-2 max-w-xs">
+              Calculadoras gratuitas de salário para o Brasil, com regras atualizadas e cálculo
+              transparente.
+            </p>
+          </div>
+          <div>
+            <p class="font-medium text-ink">Calculadoras</p>
+            <ul class="mt-2 space-y-1">
+              <li><a href="/calculadoras/salario-liquido/" class="hover:text-ink">Salário Líquido</a></li>
+              <li><a href="/calculadoras/salario-proporcional/" class="hover:text-ink">Salário Proporcional</a></li>
+              <li><a href="/calculadoras/inss/" class="hover:text-ink">INSS</a></li>
+              <li><a href="/calculadoras/irrf/" class="hover:text-ink">IRRF</a></li>
+            </ul>
+            <details class="group mt-1">
+              <summary class="mt-1 cursor-pointer select-none list-none py-1 text-ink-soft transition-colors hover:text-ink">
+                <span class="inline-flex items-center gap-1">
+                  Ver todas
+                  <svg class="h-3 w-3 transition-transform duration-200 group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </span>
+              </summary>
+              <ul class="mt-1 space-y-1 border-l border-line pl-3">
+                <li><a href="/calculadoras/salario-por-hora/" class="hover:text-ink">Salário por Hora</a></li>
+                <li><a href="/calculadoras/dias-trabalhados/" class="hover:text-ink">Dias Trabalhados</a></li>
+                <li><a href="/calculadoras/ferias/" class="hover:text-ink">Férias</a></li>
+                <li><a href="/calculadoras/13-salario/" class="hover:text-ink">13º Salário</a></li>
+                <li><a href="/calculadoras/fgts/" class="hover:text-ink">FGTS</a></li>
+                <li><a href="/calculadoras/rescisao/" class="hover:text-ink">Rescisão CLT</a></li>
+              </ul>
+            </details>
+          </div>
+          <div>
+            <p class="font-medium text-ink">Institucional</p>
+            <ul class="mt-2 space-y-1">
+              <li><a href="/como-calculamos/" class="hover:text-ink">Como calculamos</a></li>
+              <li><a href="/sobre/" class="hover:text-ink">Sobre</a></li>
+              <li><a href="/privacidade/" class="hover:text-ink">Privacidade</a></li>
+              <li><a href="/termos/" class="hover:text-ink">Termos de uso</a></li>
+              <li><a href="/contato/" class="hover:text-ink">Contato</a></li>
+            </ul>
+          </div>
+        </div>
+        <p class="mt-8 border-t border-line pt-6 text-xs">
+          © {new Date().getFullYear()} Salário Claro. Este site oferece estimativas e não
+          substitui o holerite oficial nem a orientação de um profissional de contabilidade.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      function isDark(): boolean {
+        return document.documentElement.classList.contains('dark');
+      }
+
+      function syncIcons() {
+        const dark = isDark();
+        document.querySelectorAll('.theme-icon-sun, #theme-icon-sun').forEach((el) => {
+          el.classList.toggle('hidden', dark);
+        });
+        document.querySelectorAll('.theme-icon-moon, #theme-icon-moon').forEach((el) => {
+          el.classList.toggle('hidden', !dark);
+        });
+        document
+          .querySelectorAll('#theme-toggle, #theme-toggle-mobile')
+          .forEach((el) => el.setAttribute('aria-pressed', String(dark)));
+      }
+
+      function toggleTheme() {
+        const dark = !isDark();
+        document.documentElement.classList.toggle('dark', dark);
+        try {
+          localStorage.setItem('theme', dark ? 'dark' : 'light');
+        } catch {
+          // localStorage unavailable — theme choice just won't persist across visits.
+        }
+        syncIcons();
+      }
+
+      document.getElementById('theme-toggle')?.addEventListener('click', toggleTheme);
+      document.getElementById('theme-toggle-mobile')?.addEventListener('click', toggleTheme);
+      syncIcons();
+    </script>
+
+    <script>
+      // Cinematic scroll reveal: fade/slide elements in as they enter the
+      // viewport. Tiny and dependency-free — just a couple dozen lines, no
+      // animation library. Elements start visible via CSS (see .no-js
+      // fallback in global.css) and this only adds the reveal effect once
+      // JS is confirmed running.
+      const revealTargets = document.querySelectorAll('[data-reveal]');
+      if (revealTargets.length > 0 && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+              }
+            }
+          },
+          { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+        );
+        revealTargets.forEach((el) => observer.observe(el));
+      } else {
+        revealTargets.forEach((el) => el.classList.add('is-visible'));
+      }
+    </script>
+  </body>
+</html>

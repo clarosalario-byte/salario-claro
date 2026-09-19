@@ -1,0 +1,25 @@
+---
+interface Props {
+  /** Use when a page has more than one result card (e.g. FGTS deposit + fine), so button IDs don't collide. */
+  idPrefix?: string;
+}
+const { idPrefix = '' } = Astro.props;
+---
+<div class="no-print mt-6 flex flex-wrap gap-3">
+  <button type="button" id={`${idPrefix}action-share`} class="btn-outline rounded-md px-4 py-2 text-sm font-medium">
+    Compartilhar
+  </button>
+  <button type="button" id={`${idPrefix}action-download`} class="btn-outline rounded-md px-4 py-2 text-sm font-medium">
+    Baixar resultado
+  </button>
+  <button type="button" id={`${idPrefix}action-print`} class="btn-outline rounded-md px-4 py-2 text-sm font-medium">
+    Imprimir resultado
+  </button>
+  <button type="button" id={`${idPrefix}action-copy`} class="btn-outline rounded-md px-4 py-2 text-sm font-medium">
+    Copiar resultado
+  </button>
+</div>
+<p class="no-print mt-2 text-xs text-ink-soft">
+  O link de compartilhamento inclui os valores deste cálculo no próprio endereço, não é enviado a
+  nenhum servidor, mas fica visível para quem tiver acesso ao link.
+</p>

@@ -1,0 +1,195 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ResultActions from '../../../components/ResultActions.astro';
+import AllCalculatorsNav from '../../../components/AllCalculatorsNav.astro';
+import { organizationRef, breadcrumbSchema, SITE_URL } from '../../../lib/seo/schema';
+
+const title = 'Calculadora de IRRF: Imposto Retido na Fonte';
+const description =
+  'Calcule o IRRF mensal com a tabela de 2026 e a redução da Lei 15.270/2025, incluindo dependentes e pensão alimentícia.';
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${SITE_URL}/calculadoras/irrf/#webapplication`,
+  name: 'Calculadora de IRRF 2026',
+  url: `${SITE_URL}/calculadoras/irrf/`,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any (navegador web)',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+  publisher: organizationRef(),
+};
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Calculadoras', path: '/calculadoras/' },
+  { name: 'IRRF', path: '/calculadoras/irrf/' },
+]);
+---
+<Layout title={title} description={description} path="/calculadoras/irrf/" structuredData={[webAppSchema, breadcrumb]}>
+  <section class="mx-auto max-w-3xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Calculadora de IRRF</h1>
+    <p class="mt-3 text-ink-soft">
+      Calcula o imposto de renda retido na fonte sobre o rendimento tributável mensal, com a
+      redução da Lei 15.270/2025 e a dedução mais vantajosa (simplificada ou legal).
+    </p>
+
+    <form id="calc-form" class="card-premium mt-8 space-y-5 rounded-xl p-6" novalidate>
+      <div>
+        <label for="grossSalary" class="block text-sm font-medium text-ink">Rendimento tributável mensal</label>
+        <div class="mt-1.5 flex max-w-xs items-center rounded-md border border-line focus-within:border-ink">
+          <span class="pl-3 text-ink-soft">R$</span>
+          <input type="text" inputmode="decimal" id="grossSalary" placeholder="5.000,00"
+            class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none" required />
+        </div>
+        <p id="grossSalary-error" class="mt-1 text-sm text-bad" role="alert"></p>
+        <p class="mt-1 text-xs text-ink-soft">O INSS sobre este valor é calculado automaticamente para chegar à dedução legal.</p>
+      </div>
+
+      <div>
+        <label for="dependents" class="block text-sm font-medium text-ink">Número de dependentes</label>
+        <input type="number" id="dependents" min="0" step="1" value="0"
+          class="mt-1.5 w-32 rounded-md border border-line px-3 py-2.5 outline-none focus:border-ink" />
+      </div>
+
+      <div>
+        <label for="alimony" class="block text-sm font-medium text-ink">Pensão alimentícia</label>
+        <div class="mt-1.5 flex max-w-xs items-center rounded-md border border-line focus-within:border-ink">
+          <span class="pl-3 text-ink-soft">R$</span>
+          <input type="text" inputmode="decimal" id="alimony" placeholder="0,00"
+            class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary rounded-md px-6 py-2.5 text-sm font-medium">Calcular</button>
+    </form>
+
+    <div id="result" class="card-premium mt-8 hidden rounded-xl p-6" aria-live="polite">
+      <p class="text-sm text-ink-soft">IRRF devido</p>
+      <p id="result-value" class="mt-1 font-display text-4xl font-semibold tabular-money text-ink"></p>
+      <dl class="mt-4 space-y-1.5 text-xs">
+        <div class="flex justify-between"><dt class="text-ink-soft">Dedução utilizada</dt><dd id="result-deduction" class="text-right tabular-money"></dd></div>
+        <div class="flex justify-between"><dt class="text-ink-soft">Base de cálculo</dt><dd id="result-base" class="tabular-money"></dd></div>
+        <div class="flex justify-between"><dt class="text-ink-soft">IRRF antes da redução</dt><dd id="result-before" class="tabular-money"></dd></div>
+        <div class="flex justify-between"><dt class="text-ink-soft">Redução (Lei 15.270/2025)</dt><dd id="result-reduction" class="tabular-money"></dd></div>
+      </dl>
+      <ResultActions />
+    </div>
+
+    <div class="prose-custom mt-12 space-y-4 text-ink">
+      <h2 class="font-display text-xl font-semibold">Como calculamos</h2>
+      <p class="text-ink-soft">
+        Primeiro escolhemos a dedução mais vantajosa (desconto simplificado ou a soma de INSS +
+        dependentes + pensão). Aplicamos a tabela progressiva de 2026 sobre a base resultante. Por
+        fim, aplicamos a redução da Lei 15.270/2025, que zera o imposto até R$ 5.000,00 de
+        rendimento bruto e reduz linearmente até R$ 7.350,00. Detalhes e fontes oficiais em
+        <a href="/como-calculamos/" class="text-ink underline hover:text-accent-ink">Como calculamos</a>.
+      </p>
+    </div>
+    <AllCalculatorsNav currentPath="/calculadoras/irrf/" />
+  </section>
+</Layout>
+
+<script>
+  import { calculateINSS, calculateIRRF, formatBRL, RULES_2026 } from '../../../lib/calculations/salary';
+  import { downloadResultImage, copyResultText, shareResult, flashButtonText } from '../../../lib/ui/resultActions';
+
+  function parseBRLNumber(raw: string): number {
+    if (!raw || raw.trim() === '') return 0;
+    const cleaned = raw.replace(/\s/g, '');
+    const hasComma = cleaned.includes(',');
+    const normalized = hasComma ? cleaned.replace(/\./g, '').replace(',', '.') : cleaned;
+    return parseFloat(normalized);
+  }
+
+  const form = document.getElementById('calc-form') as HTMLFormElement;
+  const resultEl = document.getElementById('result') as HTMLDivElement;
+
+  (function loadFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('b')) return;
+    (document.getElementById('grossSalary') as HTMLInputElement).value = (params.get('b') ?? '').replace('.', ',');
+    if (params.has('d')) (document.getElementById('dependents') as HTMLInputElement).value = params.get('d')!;
+    if (params.has('p')) (document.getElementById('alimony') as HTMLInputElement).value = (params.get('p') ?? '').replace('.', ',');
+    form.requestSubmit();
+  })();
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    (document.getElementById('grossSalary-error') as HTMLElement).textContent = '';
+
+    const grossSalary = parseBRLNumber((document.getElementById('grossSalary') as HTMLInputElement).value);
+    const dependents = parseInt((document.getElementById('dependents') as HTMLInputElement).value || '0', 10);
+    const alimony = parseBRLNumber((document.getElementById('alimony') as HTMLInputElement).value);
+
+    if (Number.isNaN(grossSalary) || grossSalary < 0) {
+      (document.getElementById('grossSalary-error') as HTMLElement).textContent = 'Informe um rendimento válido.';
+      resultEl.classList.add('hidden');
+      return;
+    }
+
+    const inss = calculateINSS(grossSalary, RULES_2026);
+    const result = calculateIRRF(grossSalary, inss.total, dependents, alimony, RULES_2026);
+
+    (document.getElementById('result-value') as HTMLElement).textContent = formatBRL(result.finalTax);
+    (document.getElementById('result-deduction') as HTMLElement).textContent =
+      result.deductionMethodUsed === 'simplified'
+        ? `Simplificada (${formatBRL(result.simplifiedDeduction)})`
+        : `Legal (${formatBRL(result.legalDeductions.total)})`;
+    (document.getElementById('result-base') as HTMLElement).textContent = formatBRL(result.calculationBase);
+    (document.getElementById('result-before') as HTMLElement).textContent = formatBRL(result.taxBeforeReduction);
+    (document.getElementById('result-reduction') as HTMLElement).textContent = `− ${formatBRL(result.reduction)}`;
+
+    resultEl.classList.remove('hidden');
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    lastResult = result;
+    lastGrossSalary = grossSalary;
+    lastDependents = dependents;
+    lastAlimony = alimony;
+  });
+
+  let lastResult: ReturnType<typeof calculateIRRF> | null = null;
+  let lastGrossSalary = 0;
+  let lastDependents = 0;
+  let lastAlimony = 0;
+
+  document.getElementById('action-print')?.addEventListener('click', () => window.print());
+
+  document.getElementById('action-copy')?.addEventListener('click', async (e) => {
+    if (!lastResult) return;
+    const ok = await copyResultText([
+      `Rendimento tributável: ${formatBRL(lastGrossSalary)}`,
+      `Base de cálculo: ${formatBRL(lastResult.calculationBase)}`,
+      `IRRF antes da redução: ${formatBRL(lastResult.taxBeforeReduction)}`,
+      `Redução: − ${formatBRL(lastResult.reduction)}`,
+      `IRRF devido: ${formatBRL(lastResult.finalTax)}`,
+    ]);
+    if (ok) flashButtonText(e.currentTarget as HTMLButtonElement, 'Copiado!');
+  });
+
+  document.getElementById('action-share')?.addEventListener('click', async (e) => {
+    if (!lastResult) return;
+    const outcome = await shareResult(
+      { b: lastGrossSalary, d: lastDependents, p: lastAlimony },
+      `IRRF: ${formatBRL(lastResult.finalTax)}, calculado no Salário Claro`
+    );
+    if (outcome === 'copied') flashButtonText(e.currentTarget as HTMLButtonElement, 'Link copiado!');
+  });
+
+  document.getElementById('action-download')?.addEventListener('click', () => {
+    if (!lastResult) return;
+    downloadResultImage({
+      title: 'IRRF devido',
+      bigValue: formatBRL(lastResult.finalTax),
+      badge: 'Regras 2026',
+      rows: [
+        { label: 'Rendimento tributável', value: formatBRL(lastGrossSalary) },
+        { label: 'Base de cálculo', value: formatBRL(lastResult.calculationBase) },
+        { label: 'IRRF antes da redução', value: formatBRL(lastResult.taxBeforeReduction) },
+        { label: 'Redução (Lei 15.270/2025)', value: `− ${formatBRL(lastResult.reduction)}` },
+        { label: 'IRRF devido', value: formatBRL(lastResult.finalTax), emphasis: true },
+      ],
+      filename: 'irrf-salarioclaro',
+    });
+  });
+</script>

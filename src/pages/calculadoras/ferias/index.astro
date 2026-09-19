@@ -1,0 +1,240 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ResultActions from '../../../components/ResultActions.astro';
+import AllCalculatorsNav from '../../../components/AllCalculatorsNav.astro';
+import { organizationRef, breadcrumbSchema, SITE_URL } from '../../../lib/seo/schema';
+
+const title = 'Calculadora de Férias: Com o Terço Constitucional';
+const description =
+  'Calcule a remuneração de férias com o terço constitucional, abono pecuniário, INSS e IRRF, com as regras de 2026.';
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${SITE_URL}/calculadoras/ferias/#webapplication`,
+  name: 'Calculadora de Férias 2026',
+  url: `${SITE_URL}/calculadoras/ferias/`,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any (navegador web)',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+  publisher: organizationRef(),
+};
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Calculadoras', path: '/calculadoras/' },
+  { name: 'Férias', path: '/calculadoras/ferias/' },
+]);
+---
+<Layout title={title} description={description} path="/calculadoras/ferias/" structuredData={[webAppSchema, breadcrumb]}>
+  <section class="mx-auto max-w-3xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Calculadora de férias</h1>
+    <p class="mt-3 text-ink-soft">
+      Remuneração de férias com o terço constitucional, com a opção de vender até 10 dias como
+      abono pecuniário.
+    </p>
+
+    <form id="calc-form" class="card-premium mt-8 space-y-5 rounded-xl p-6" novalidate>
+      <div>
+        <label for="monthlySalary" class="block text-sm font-medium text-ink">Salário mensal</label>
+        <div class="mt-1.5 flex max-w-xs items-center rounded-md border border-line focus-within:border-ink">
+          <span class="pl-3 text-ink-soft">R$</span>
+          <input type="text" inputmode="decimal" id="monthlySalary" placeholder="3.000,00"
+            class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none" required />
+        </div>
+        <p id="monthlySalary-error" class="mt-1 text-sm text-bad" role="alert"></p>
+      </div>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="vacationDaysTaken" class="block text-sm font-medium text-ink">Dias de férias gozados</label>
+          <input type="number" id="vacationDaysTaken" min="0" max="30" value="30"
+            class="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-ink" />
+        </div>
+        <div>
+          <label for="abonoDays" class="block text-sm font-medium text-ink">Dias vendidos (abono)</label>
+          <input type="number" id="abonoDays" min="0" max="10" value="0"
+            class="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-ink" />
+          <p class="mt-1 text-xs text-ink-soft">Até 10 dias (1/3 das férias), conforme art. 143 da CLT.</p>
+        </div>
+      </div>
+      <p id="days-error" class="text-sm text-bad" role="alert"></p>
+
+      <details class="rounded-md border border-line p-4">
+        <summary class="cursor-pointer select-none text-sm font-medium text-ink">Mais opções</summary>
+        <div class="mt-4 grid gap-5 sm:grid-cols-2">
+          <div>
+            <label for="dependents" class="block text-sm font-medium text-ink">Dependentes</label>
+            <input type="number" id="dependents" min="0" value="0"
+              class="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-ink" />
+          </div>
+          <div>
+            <label for="alimony" class="block text-sm font-medium text-ink">Pensão alimentícia</label>
+            <div class="mt-1.5 flex items-center rounded-md border border-line focus-within:border-ink">
+              <span class="pl-3 text-ink-soft">R$</span>
+              <input type="text" inputmode="decimal" id="alimony" placeholder="0,00"
+                class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none" />
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <button type="submit" class="btn-primary rounded-md px-6 py-2.5 text-sm font-medium">Calcular</button>
+    </form>
+
+    <div id="result" class="card-premium mt-8 hidden rounded-xl p-6" aria-live="polite">
+      <p class="text-sm text-ink-soft">Valor líquido a receber de férias</p>
+      <p id="result-value" class="mt-1 font-display text-4xl font-semibold tabular-money text-ink"></p>
+      <dl class="mt-6 divide-y divide-line border-t border-line text-sm">
+        <div class="flex justify-between py-2"><dt class="text-ink-soft">Férias gozadas</dt><dd id="r-pay" class="tabular-money"></dd></div>
+        <div class="flex justify-between py-2"><dt class="text-ink-soft">1/3 constitucional</dt><dd id="r-third" class="tabular-money"></dd></div>
+        <div class="flex justify-between py-2"><dt class="text-ink-soft">Base tributável (férias + 1/3)</dt><dd id="r-base" class="tabular-money font-medium"></dd></div>
+        <div class="flex justify-between py-2"><dt class="text-ink-soft">INSS</dt><dd id="r-inss" class="tabular-money text-bad"></dd></div>
+        <div class="flex justify-between py-2"><dt class="text-ink-soft">IRRF</dt><dd id="r-irrf" class="tabular-money text-bad"></dd></div>
+        <div id="r-abono-row" class="hidden justify-between py-2">
+          <dt class="text-ink-soft">Abono pecuniário + 1/3 (isento)</dt><dd id="r-abono" class="tabular-money"></dd>
+        </div>
+      </dl>
+      <p class="mt-4 text-xs text-ink-soft">
+        O abono pecuniário e seu 1/3 são isentos de INSS e IRRF (natureza indenizatória) e somam
+        diretamente ao valor líquido.
+      </p>
+      <ResultActions />
+      <p class="mt-4 text-xs text-ink-soft">
+        Este cálculo é uma estimativa e não substitui o holerite oficial ou a orientação de um
+        profissional de contabilidade.
+      </p>
+    </div>
+
+    <div class="prose-custom mt-12 space-y-4 text-ink">
+      <h2 class="font-display text-xl font-semibold">Como calculamos</h2>
+      <p class="text-ink-soft">
+        O valor do dia de férias é sempre o salário mensal dividido por 30. Sobre os dias
+        efetivamente gozados soma-se o terço constitucional (1/3), e o INSS e o IRRF incidem sobre
+        essa soma, calculados em separado do salário do mês. Se você vender parte das férias como
+        abono pecuniário, esses dias (e o 1/3 correspondente) ficam de fora da base tributável.
+        Aplicamos também a redução de imposto de 2026 sobre a base de férias. Veja a metodologia
+        completa, incluindo uma observação sobre essa interpretação, em
+        <a href="/como-calculamos/" class="text-ink underline hover:text-accent-ink">Como calculamos</a>.
+      </p>
+    </div>
+    <AllCalculatorsNav currentPath="/calculadoras/ferias/" />
+  </section>
+</Layout>
+
+<script>
+  import { calculateVacation } from '../../../lib/calculations/vacation';
+  import { formatBRL } from '../../../lib/calculations/salary';
+  import { downloadResultImage, copyResultText, shareResult, flashButtonText, type ResultRow } from '../../../lib/ui/resultActions';
+
+  function parseBRLNumber(raw: string): number {
+    if (!raw || raw.trim() === '') return 0;
+    const cleaned = raw.replace(/\s/g, '');
+    const hasComma = cleaned.includes(',');
+    const normalized = hasComma ? cleaned.replace(/\./g, '').replace(',', '.') : cleaned;
+    return parseFloat(normalized);
+  }
+
+  const form = document.getElementById('calc-form') as HTMLFormElement;
+  const resultEl = document.getElementById('result') as HTMLDivElement;
+
+  (function loadFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('s')) return;
+    (document.getElementById('monthlySalary') as HTMLInputElement).value = (params.get('s') ?? '').replace('.', ',');
+    if (params.has('vd')) (document.getElementById('vacationDaysTaken') as HTMLInputElement).value = params.get('vd')!;
+    if (params.has('ad')) (document.getElementById('abonoDays') as HTMLInputElement).value = params.get('ad')!;
+    form.requestSubmit();
+  })();
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('[role="alert"]').forEach((el) => (el.textContent = ''));
+
+    const monthlySalary = parseBRLNumber((document.getElementById('monthlySalary') as HTMLInputElement).value);
+    const vacationDaysTaken = parseInt((document.getElementById('vacationDaysTaken') as HTMLInputElement).value || '0', 10);
+    const abonoDays = parseInt((document.getElementById('abonoDays') as HTMLInputElement).value || '0', 10);
+    const dependents = parseInt((document.getElementById('dependents') as HTMLInputElement).value || '0', 10);
+    const alimony = parseBRLNumber((document.getElementById('alimony') as HTMLInputElement).value);
+
+    try {
+      const r = calculateVacation({ monthlySalary, vacationDaysTaken, abonoDays, dependents, alimony });
+      (document.getElementById('result-value') as HTMLElement).textContent = formatBRL(r.netVacationPay);
+      (document.getElementById('r-pay') as HTMLElement).textContent = formatBRL(r.vacationPay);
+      (document.getElementById('r-third') as HTMLElement).textContent = formatBRL(r.constitutionalThird);
+      (document.getElementById('r-base') as HTMLElement).textContent = formatBRL(r.taxableVacationBase);
+      (document.getElementById('r-inss') as HTMLElement).textContent = `− ${formatBRL(r.inssTotal)}`;
+      (document.getElementById('r-irrf') as HTMLElement).textContent = `− ${formatBRL(r.irrfTotal)}`;
+
+      const abonoRow = document.getElementById('r-abono-row')!;
+      if (r.abonoTotalExempt > 0) {
+        abonoRow.classList.remove('hidden');
+        abonoRow.classList.add('flex');
+        (document.getElementById('r-abono') as HTMLElement).textContent = `+ ${formatBRL(r.abonoTotalExempt)}`;
+      } else {
+        abonoRow.classList.add('hidden');
+      }
+
+      resultEl.classList.remove('hidden');
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      lastResult = r;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Entrada inválida.';
+      (document.getElementById('days-error') as HTMLElement).textContent = msg;
+      resultEl.classList.add('hidden');
+    }
+  });
+
+  let lastResult: ReturnType<typeof calculateVacation> | null = null;
+
+  document.getElementById('action-print')?.addEventListener('click', () => window.print());
+
+  document.getElementById('action-copy')?.addEventListener('click', async (e) => {
+    if (!lastResult) return;
+    const lines = [
+      `Férias gozadas: ${formatBRL(lastResult.vacationPay)}`,
+      `1/3 constitucional: ${formatBRL(lastResult.constitutionalThird)}`,
+      `INSS: − ${formatBRL(lastResult.inssTotal)}`,
+      `IRRF: − ${formatBRL(lastResult.irrfTotal)}`,
+    ];
+    if (lastResult.abonoTotalExempt > 0) lines.push(`Abono pecuniário + 1/3: + ${formatBRL(lastResult.abonoTotalExempt)}`);
+    lines.push(`Valor líquido: ${formatBRL(lastResult.netVacationPay)}`);
+    const ok = await copyResultText(lines);
+    if (ok) flashButtonText(e.currentTarget as HTMLButtonElement, 'Copiado!');
+  });
+
+  document.getElementById('action-share')?.addEventListener('click', async (e) => {
+    if (!lastResult) return;
+    const outcome = await shareResult(
+      {
+        s: (document.getElementById('monthlySalary') as HTMLInputElement).value.replace(/\./g, '').replace(',', '.'),
+        vd: lastResult.vacationDaysTaken,
+        ad: lastResult.abonoDays,
+      },
+      `Férias líquidas: ${formatBRL(lastResult.netVacationPay)}, calculado no Salário Claro`
+    );
+    if (outcome === 'copied') flashButtonText(e.currentTarget as HTMLButtonElement, 'Link copiado!');
+  });
+
+  document.getElementById('action-download')?.addEventListener('click', () => {
+    if (!lastResult) return;
+    const rows: ResultRow[] = [
+      { label: 'Férias gozadas', value: formatBRL(lastResult.vacationPay) },
+      { label: '1/3 constitucional', value: formatBRL(lastResult.constitutionalThird) },
+      { label: 'INSS', value: `− ${formatBRL(lastResult.inssTotal)}`, color: '#b3401f' },
+      { label: 'IRRF', value: `− ${formatBRL(lastResult.irrfTotal)}`, color: '#b3401f' },
+    ];
+    if (lastResult.abonoTotalExempt > 0) {
+      rows.push({ label: 'Abono pecuniário + 1/3 (isento)', value: `+ ${formatBRL(lastResult.abonoTotalExempt)}` });
+    }
+    rows.push({ label: 'Valor líquido de férias', value: formatBRL(lastResult.netVacationPay), emphasis: true });
+
+    downloadResultImage({
+      title: 'Valor líquido a receber de férias',
+      bigValue: formatBRL(lastResult.netVacationPay),
+      badge: 'Regras 2026',
+      rows,
+      filename: 'ferias-salarioclaro',
+    });
+  });
+</script>

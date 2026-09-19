@@ -1,0 +1,190 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ResultActions from '../../../components/ResultActions.astro';
+import AllCalculatorsNav from '../../../components/AllCalculatorsNav.astro';
+import { RULES_2026 } from '../../../lib/calculations/salary';
+import { organizationRef, breadcrumbSchema, SITE_URL } from '../../../lib/seo/schema';
+
+const title = 'Calculadora de INSS: Veja o Desconto por Faixa';
+const description =
+  'Calcule a contribuição do INSS de forma progressiva, faixa por faixa, com a tabela oficial de 2026.';
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${SITE_URL}/calculadoras/inss/#webapplication`,
+  name: 'Calculadora de INSS 2026',
+  url: `${SITE_URL}/calculadoras/inss/`,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any (navegador web)',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+  publisher: organizationRef(),
+};
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Calculadoras', path: '/calculadoras/' },
+  { name: 'INSS', path: '/calculadoras/inss/' },
+]);
+---
+<Layout title={title} description={description} path="/calculadoras/inss/" structuredData={[webAppSchema, breadcrumb]}>
+  <section class="mx-auto max-w-3xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Calculadora de INSS</h1>
+    <p class="mt-3 text-ink-soft">
+      A contribuição previdenciária é progressiva: cada faixa salarial tem sua própria alíquota,
+      aplicada apenas sobre a fatia do salário que se enquadra naquela faixa.
+    </p>
+
+    <form id="calc-form" class="card-premium mt-8 space-y-5 rounded-xl p-6" novalidate>
+      <div>
+        <label for="grossSalary" class="block text-sm font-medium text-ink">Salário de contribuição</label>
+        <div class="mt-1.5 flex max-w-xs items-center rounded-md border border-line focus-within:border-ink">
+          <span class="pl-3 text-ink-soft">R$</span>
+          <input type="text" inputmode="decimal" id="grossSalary" placeholder="3.000,00"
+            class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none" required />
+        </div>
+        <p id="grossSalary-error" class="mt-1 text-sm text-bad" role="alert"></p>
+      </div>
+      <button type="submit" class="btn-primary rounded-md px-6 py-2.5 text-sm font-medium">Calcular</button>
+    </form>
+
+    <div id="result" class="card-premium mt-8 hidden rounded-xl p-6" aria-live="polite">
+      <p class="text-sm text-ink-soft">Contribuição total do INSS</p>
+      <p id="result-value" class="mt-1 font-display text-4xl font-semibold tabular-money text-ink"></p>
+      <p id="result-ceiling" class="mt-1 hidden text-xs text-accent-ink"></p>
+      <div class="mt-4 overflow-x-auto">
+        <table class="w-full min-w-[420px] text-xs">
+          <thead>
+            <tr class="text-left text-ink-soft">
+              <th class="pb-1 font-normal">Faixa</th>
+              <th class="pb-1 pr-3 text-right font-normal">Alíquota</th>
+              <th class="pb-1 pr-3 text-right font-normal">Base considerada</th>
+              <th class="pb-1 text-right font-normal">Valor</th>
+            </tr>
+          </thead>
+          <tbody id="result-table"></tbody>
+        </table>
+      </div>
+      <ResultActions />
+    </div>
+
+    <div class="prose-custom mt-12 space-y-4 text-ink">
+      <h2 class="font-display text-xl font-semibold">Tabela do INSS 2026</h2>
+      <p class="text-ink-soft">
+        Faixas vigentes a partir de 1º de janeiro de 2026 (Portaria Interministerial MPS/MF nº 13, de
+        9/1/2026). Teto de contribuição: {new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(RULES_2026.inss.ceiling)}.
+        Detalhes completos e fontes em <a href="/como-calculamos/" class="text-ink underline hover:text-accent-ink">Como calculamos</a>.
+      </p>
+    </div>
+    <AllCalculatorsNav currentPath="/calculadoras/inss/" />
+  </section>
+</Layout>
+
+<script>
+  import { calculateINSS, formatBRL, RULES_2026 } from '../../../lib/calculations/salary';
+  import { downloadResultImage, copyResultText, shareResult, flashButtonText, type ResultRow } from '../../../lib/ui/resultActions';
+
+  function parseBRLNumber(raw: string): number {
+    if (!raw || raw.trim() === '') return NaN;
+    const cleaned = raw.replace(/\s/g, '');
+    const hasComma = cleaned.includes(',');
+    const normalized = hasComma ? cleaned.replace(/\./g, '').replace(',', '.') : cleaned;
+    return parseFloat(normalized);
+  }
+
+  const form = document.getElementById('calc-form') as HTMLFormElement;
+  const resultEl = document.getElementById('result') as HTMLDivElement;
+
+  (function loadFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('b')) return;
+    (document.getElementById('grossSalary') as HTMLInputElement).value = (params.get('b') ?? '').replace('.', ',');
+    form.requestSubmit();
+  })();
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    (document.getElementById('grossSalary-error') as HTMLElement).textContent = '';
+
+    const grossSalary = parseBRLNumber((document.getElementById('grossSalary') as HTMLInputElement).value);
+    if (Number.isNaN(grossSalary) || grossSalary < 0) {
+      (document.getElementById('grossSalary-error') as HTMLElement).textContent = 'Informe um salário válido.';
+      resultEl.classList.add('hidden');
+      return;
+    }
+
+    const result = calculateINSS(grossSalary, RULES_2026);
+    (document.getElementById('result-value') as HTMLElement).textContent = formatBRL(result.total);
+
+    const ceilingNote = document.getElementById('result-ceiling') as HTMLElement;
+    if (result.hitCeiling) {
+      ceilingNote.textContent = `Salário no teto ou acima do teto de contribuição (${formatBRL(RULES_2026.inss.ceiling)}). Sem desconto adicional.`;
+      ceilingNote.classList.remove('hidden');
+    } else {
+      ceilingNote.classList.add('hidden');
+    }
+
+    const tbody = document.getElementById('result-table')!;
+    tbody.innerHTML = result.brackets
+      .map(
+        (b) => `<tr class="border-t border-line">
+          <td class="py-1.5 pr-3">${formatBRL(b.from)} – ${formatBRL(b.to)}</td>
+          <td class="py-1.5 pr-3 text-right">${(b.rate * 100).toLocaleString('pt-BR')}%</td>
+          <td class="py-1.5 pr-3 text-right tabular-money">${formatBRL(b.taxableSlice)}</td>
+          <td class="py-1.5 text-right tabular-money">${formatBRL(b.amount)}</td>
+        </tr>`
+      )
+      .join('');
+
+    resultEl.classList.remove('hidden');
+    resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    lastResult = result;
+    lastGrossSalary = grossSalary;
+  });
+
+  let lastResult: ReturnType<typeof calculateINSS> | null = null;
+  let lastGrossSalary = 0;
+
+  document.getElementById('action-print')?.addEventListener('click', () => window.print());
+
+  document.getElementById('action-copy')?.addEventListener('click', async (e) => {
+    if (!lastResult) return;
+    const lines = [
+      `Salário de contribuição: ${formatBRL(lastGrossSalary)}`,
+      ...lastResult.brackets.map(
+        (b) => `${formatBRL(b.from)} – ${formatBRL(b.to)} (${(b.rate * 100).toLocaleString('pt-BR')}%): ${formatBRL(b.amount)}`
+      ),
+      `INSS total: ${formatBRL(lastResult.total)}`,
+    ];
+    const ok = await copyResultText(lines);
+    if (ok) flashButtonText(e.currentTarget as HTMLButtonElement, 'Copiado!');
+  });
+
+  document.getElementById('action-share')?.addEventListener('click', async (e) => {
+    if (!lastResult) return;
+    const outcome = await shareResult(
+      { b: lastGrossSalary },
+      `INSS: ${formatBRL(lastResult.total)}, calculado no Salário Claro`
+    );
+    if (outcome === 'copied') flashButtonText(e.currentTarget as HTMLButtonElement, 'Link copiado!');
+  });
+
+  document.getElementById('action-download')?.addEventListener('click', () => {
+    if (!lastResult) return;
+    const rows: ResultRow[] = [
+      { label: 'Salário de contribuição', value: formatBRL(lastGrossSalary) },
+      ...lastResult.brackets.map((b) => ({
+        label: `${formatBRL(b.from)} – ${formatBRL(b.to)} (${(b.rate * 100).toLocaleString('pt-BR')}%)`,
+        value: formatBRL(b.amount),
+      })),
+      { label: 'INSS total', value: formatBRL(lastResult.total), emphasis: true },
+    ];
+    downloadResultImage({
+      title: 'Contribuição do INSS',
+      bigValue: formatBRL(lastResult.total),
+      badge: 'Regras 2026',
+      rows,
+      filename: 'inss-salarioclaro',
+    });
+  });
+</script>

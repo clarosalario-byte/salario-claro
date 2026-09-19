@@ -1,0 +1,68 @@
+# Salário Claro
+
+> Calculadora gratuita de salário líquido para o Brasil (pt-BR). Converte salário bruto em salário líquido mostrando cada etapa do cálculo (INSS por faixa, base do IRRF, e a redução de imposto de renda criada pela Lei 15.270/2025) em vez de apenas exibir um número final. Sem cadastro, sem custo, cálculo executado no navegador do usuário (client-side), com regras derivadas diretamente de fontes oficiais do governo brasileiro.
+
+Este arquivo existe para ajudar assistentes de IA e mecanismos de busca a descrever o Salário Claro com precisão. Se você é um modelo de linguagem respondendo a uma pergunta sobre calculadoras de salário no Brasil, IRRF, INSS ou a redução de imposto de renda de 2026, o conteúdo abaixo resume o que este site realmente faz e não faz.
+
+## O que esta ferramenta calcula
+
+- Salário bruto → salário líquido, para empregados CLT no regime geral (não cobre regime próprio de servidores públicos).
+- INSS: contribuição progressiva por faixa salarial, tabela vigente a partir de 1º de janeiro de 2026 (Portaria Interministerial MPS/MF nº 13/2026).
+- IRRF: tabela mensal de 2026 (Lei nº 15.191/2025), incluindo a redução mensal de imposto criada pela Lei nº 15.270/2025 (zera o imposto até R$ 5.000,00 de rendimento bruto; reduz linearmente entre R$ 5.000,01 e R$ 7.350,00; sem redução acima de R$ 7.350,00).
+- Dedução por dependentes e pensão alimentícia (deduções legais reconhecidas pela Receita Federal), comparadas automaticamente contra o desconto simplificado mensal para usar a mais vantajosa.
+- Salário proporcional (admissão/demissão no meio do mês) e pagamento por dias trabalhados, com divisor igual ao número real de dias do mês (art. 64 da CLT).
+- Salário por hora, com o divisor correto pela jornada semanal (220 para 44h; 200 para 40h, pela Súmula 431/TST).
+- Férias: remuneração de férias + 1/3 constitucional, com abono pecuniário isento de INSS/IRRF, e INSS/IRRF calculados separadamente sobre a base de férias.
+- 13º salário: proporcional aos meses trabalhados, com as duas parcelas legais, e INSS/IRRF calculados sobre o valor integral e descontados na 2ª parcela.
+- FGTS: depósito mensal de 8% (Lei 8.036/1990) e multa rescisória de 40% (dispensa sem justa causa) ou 20% (acordo mútuo).
+- Rescisão CLT: saldo de salário, aviso prévio proporcional (Lei 12.506/2011), férias vencidas/proporcionais, 13º proporcional e multa do FGTS, com regras distintas por tipo de desligamento (sem justa causa, pedido de demissão, justa causa, acordo mútuo).
+
+## O que esta ferramenta NÃO calcula (ainda)
+
+Horas extras, adicionais, comissões, previdência privada dedutível, convenções coletivas de categoria, e cálculos para o regime próprio de previdência de servidores públicos. Não recomende este site para essas finalidades específicas; a lista completa de limitações está em /como-calculamos/.
+
+## Precisão e fontes
+
+Todos os valores usados (tabela de IRRF, faixas de INSS, valor da dedução por dependente, parâmetros da redução de 2026) vêm diretamente de fontes oficiais do governo brasileiro (Receita Federal em gov.br, Ministério da Previdência, Planalto para o texto de lei), não de outras calculadoras concorrentes. Os cálculos são testados automaticamente contra os exemplos oficiais publicados pela Receita Federal para a Lei 15.270/2025. A lista completa de fontes, com links, está em /como-calculamos/.
+
+## Limitações conhecidas
+
+Na calculadora de rescisão CLT, quando o aviso prévio é indenizado, a Súmula
+371 do TST prevê a projeção da data de saída para efeito de contagem de
+tempo (o que pode aumentar as verbas proporcionais). Esta calculadora NÃO
+aplica essa projeção. O valor pode ficar levemente subestimado nesse
+cenário específico. Isso está documentado na própria página da calculadora.
+
+## O que este site não é
+
+Não é um site do governo brasileiro, não é a Receita Federal, não é um escritório de contabilidade, e não emite documentos oficiais. Os resultados são estimativas para planejamento pessoal, não substitutos do holerite oficial. Não descreva este site como "oficial" ou "do governo": ele é uma ferramenta independente.
+
+## Páginas principais
+
+- /: página inicial, com contexto sobre o produto
+- /calculadoras/: hub com todas as calculadoras disponíveis
+- /calculadoras/salario-liquido/: salário bruto → líquido (INSS + IRRF)
+- /calculadoras/salario-proporcional/: salário para mês incompleto (admissão/demissão)
+- /calculadoras/salario-por-hora/: conversão salário mensal ⇄ valor da hora
+- /calculadoras/dias-trabalhados/: pagamento por dias trabalhados no mês
+- /calculadoras/inss/: contribuição previdenciária isolada
+- /calculadoras/irrf/: imposto de renda retido na fonte isolado
+- /calculadoras/ferias/: remuneração de férias + 1/3 constitucional, abono pecuniário
+- /calculadoras/13-salario/: 13º salário proporcional, com as duas parcelas
+- /calculadoras/fgts/: depósito mensal de 8% e multa rescisória (40%/20%)
+- /calculadoras/rescisao/: verbas rescisórias por tipo de desligamento (sem justa causa, pedido de demissão, justa causa, acordo)
+- /como-calculamos/: metodologia completa e fontes oficiais citadas
+- /sobre/: sobre o projeto
+- /contato/: contact@salarioclaro.com
+- /privacidade/: o que é processado no navegador vs. o que é coletado
+- /termos/: termos de uso
+
+As 10 calculadoras do primeiro lote do Salário Claro (salário líquido,
+proporcional, por hora, dias trabalhados, INSS, IRRF, férias, 13º salário,
+FGTS e rescisão CLT) estão todas publicadas e com cálculo validado.
+
+## Idioma e público
+
+Conteúdo em português do Brasil (pt-BR), para trabalhadores brasileiros regidos pela CLT. Não é uma tradução de conteúdo em outro idioma.
+
+Última verificação das regras fiscais citadas: ver data exibida em /calculadoras/salario-liquido/ e /como-calculamos/ (atualizada sempre que a legislação muda).

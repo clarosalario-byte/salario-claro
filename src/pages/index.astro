@@ -1,0 +1,338 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { organizationFull, websiteFull, SITE_URL } from '../lib/seo/schema';
+
+const title = 'Calculadora de Salário Líquido | Salário Claro';
+const description =
+  'Calculadora de salário líquido: veja o INSS, o IRRF e o valor líquido a partir do salário bruto. Grátis, sem cadastro, cálculo no navegador.';
+
+const faqs = [
+  {
+    q: 'Como calcular o salário líquido?',
+    a: 'Parta do salário bruto, subtraia o INSS (calculado por faixa progressiva) e o IRRF (calculado sobre a base de cálculo, já com a redução de 2026 quando aplicável). O valor restante, menos outros descontos como vale-transporte, é o salário líquido. A calculadora de salário líquido faz essa conta automaticamente e mostra cada etapa.',
+  },
+  {
+    q: 'Qual a diferença entre salário bruto e salário líquido?',
+    a: 'Salário bruto é o valor combinado no contrato, antes de qualquer desconto. Salário líquido é o que cai na conta depois de descontados INSS, IRRF e outros valores.',
+  },
+  {
+    q: 'O cálculo considera INSS?',
+    a: 'Sim. O INSS é calculado de forma progressiva, faixa por faixa, usando a tabela de contribuição de 2026.',
+  },
+  {
+    q: 'O cálculo considera IRRF?',
+    a: 'Sim, incluindo a redução mensal criada pela Lei 15.270/2025 para quem tem salário bruto até R$ 7.350,00.',
+  },
+  {
+    q: 'Dependentes alteram o salário líquido?',
+    a: 'Sim. Cada dependente gera uma dedução que pode reduzir a base de cálculo do IRRF, dependendo se essa dedução é mais vantajosa que o desconto simplificado.',
+  },
+  {
+    q: 'O cálculo usa as regras de 2026?',
+    a: 'Sim. A calculadora usa a tabela de IRRF de 2026, a redução da Lei 15.270/2025 e a tabela de contribuição do INSS de 2026, com fontes oficiais listadas na página Como calculamos.',
+  },
+  {
+    q: 'O resultado do Salário Claro é oficial?',
+    a: 'Não. O Salário Claro é uma calculadora independente, não é um serviço do governo nem substitui o holerite oficial. O resultado é uma estimativa para ajudar no seu planejamento.',
+  },
+];
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${SITE_URL}/#webapplication`,
+  name: 'Salário Claro',
+  url: SITE_URL,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any (navegador web)',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+  publisher: { '@id': `${SITE_URL}/#organization` },
+};
+---
+
+<Layout
+  title={title}
+  description={description}
+  path="/"
+  structuredData={[organizationFull(), websiteFull(), webAppSchema, faqSchema]}
+>
+  <section class="hero-texture relative overflow-hidden py-20 sm:py-28" data-reveal>
+    <svg
+      viewBox="0 0 1200 560"
+      preserveAspectRatio="xMidYMid slice"
+      class="pointer-events-none absolute inset-0 h-full w-full text-ink opacity-[0.16] dark:opacity-[0.24]"
+      aria-hidden="true"
+    >
+<circle cx="40" cy="60" r="34" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="1160" cy="90" r="44" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="90" cy="480" r="28" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="1120" cy="470" r="36" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="600" cy="40" r="24" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="300" cy="500" r="20" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="980" cy="220" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="20" cy="260" r="22" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="1180" cy="320" r="30" fill="none" stroke="currentColor" stroke-width="2"/>
+<circle cx="500" cy="470" r="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<text x="50" y="72" font-family="Georgia, serif" font-size="22" font-weight="700" fill="currentColor" text-anchor="middle" transform="rotate(-8 50 72)">R$</text>
+<text x="1148" y="104" font-family="Georgia, serif" font-size="28" font-weight="700" fill="currentColor" text-anchor="middle" transform="rotate(6 1148 104)">R$</text>
+<text x="100" y="490" font-family="Georgia, serif" font-size="18" font-weight="700" fill="currentColor" text-anchor="middle" transform="rotate(10 100 490)">R$</text>
+<text x="1000" y="232" font-family="Georgia, serif" font-size="14" font-weight="700" fill="currentColor" text-anchor="middle" transform="rotate(-12 1000 232)">R$</text>
+<text x="30" y="270" font-family="Georgia, serif" font-size="16" font-weight="700" fill="currentColor" text-anchor="middle" transform="rotate(5 30 270)">R$</text>
+<rect x="150" y="114" width="10" height="16" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="166" y="102" width="10" height="28" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="182" y="120" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="198" y="108" width="10" height="22" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="880" y="462" width="10" height="18" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="896" y="450" width="10" height="30" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="912" y="468" width="10" height="12" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="928" y="456" width="10" height="24" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="1080" y="46" width="10" height="14" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="1096" y="36" width="10" height="24" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="1112" y="50" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"/>
+<polyline points="200,420 260,390 310,410 370,360 430,380 490,320" fill="none" stroke="currentColor" stroke-width="2"/>
+<polyline points="700,150 750,170 800,120 850,140 900,90 950,110" fill="none" stroke="currentColor" stroke-width="2"/>
+<g transform="translate(1140,380) scale(0.9)">
+<rect x="0" y="0" width="46" height="60" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="8" y="8" width="30" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<rect x="8" y="26" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="20" y="26" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="32" y="26" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="8" y="36" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="20" y="36" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="32" y="36" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="8" y="46" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="20" y="46" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="32" y="46" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+</g>
+<g transform="translate(-10,380) scale(0.7)">
+<rect x="0" y="0" width="46" height="60" rx="6" fill="none" stroke="currentColor" stroke-width="2"/>
+<rect x="8" y="8" width="30" height="10" rx="2" fill="none" stroke="currentColor" stroke-width="1.5"/>
+<rect x="8" y="26" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="20" y="26" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="32" y="26" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="8" y="36" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="20" y="36" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="32" y="36" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="8" y="46" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="20" y="46" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+<rect x="32" y="46" width="8" height="6" rx="1" fill="none" stroke="currentColor" stroke-width="1.2"/>
+</g>
+<g transform="translate(560,-15) scale(0.8)">
+<rect x="0" y="0" width="40" height="52" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
+<line x1="8" y1="14" x2="32" y2="14" stroke="currentColor" stroke-width="1.5"/>
+<line x1="8" y1="24" x2="32" y2="24" stroke="currentColor" stroke-width="1.5"/>
+<line x1="8" y1="34" x2="32" y2="34" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<g transform="translate(1160,200) scale(0.75)">
+<rect x="0" y="0" width="40" height="52" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
+<line x1="8" y1="14" x2="32" y2="14" stroke="currentColor" stroke-width="1.5"/>
+<line x1="8" y1="24" x2="32" y2="24" stroke="currentColor" stroke-width="1.5"/>
+<line x1="8" y1="34" x2="32" y2="34" stroke="currentColor" stroke-width="1.5"/>
+</g>
+</svg>
+    <div class="relative mx-auto max-w-3xl px-5 text-center">
+      <h1 class="font-display text-4xl font-semibold leading-[1.1] text-ink sm:text-5xl">
+        Calculadora de salário líquido
+      </h1>
+      <p class="mx-auto mt-5 max-w-xl text-lg text-ink-soft">
+        Calcule quanto você pode receber de salário líquido a partir do seu salário bruto,
+        considerando descontos como INSS e IRRF e as regras aplicáveis.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <a
+          href="/calculadoras/salario-liquido/"
+          class="btn-primary rounded-md px-6 py-3 text-sm font-medium"
+        >
+          Calcular salário líquido
+        </a>
+        <a
+          href="/como-calculamos/"
+          class="btn-outline rounded-md px-6 py-3 text-sm font-medium"
+        >
+          Entender como funciona
+        </a>
+      </div>
+
+      <div class="card-premium relative z-10 mx-auto mt-12 max-w-md rounded-xl p-5 text-left sm:-mb-24">
+        <p class="text-xs font-medium uppercase tracking-wide text-ink-soft">Exemplo rápido</p>
+        <dl class="mt-3 space-y-2 text-sm">
+          <div class="flex justify-between"><dt class="text-ink-soft">Salário bruto</dt><dd class="tabular-money font-medium text-ink">R$ 3.000,00</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-soft">INSS</dt><dd class="tabular-money text-bad">− R$ 248,60</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-soft">IRRF</dt><dd class="tabular-money text-bad">− R$ 0,00</dd></div>
+          <div class="flex justify-between border-t border-line pt-2 font-medium"><dt class="text-ink">Salário líquido</dt><dd class="tabular-money text-ink">R$ 2.751,40</dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-paper-raised pb-16 pt-16 sm:pt-24" data-reveal>
+    <div class="mx-auto max-w-5xl px-5">
+      <h2 class="font-display text-2xl font-semibold text-ink">Por que usar o Salário Claro?</h2>
+      <div class="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div>
+          <p class="font-medium text-ink">Regras atualizadas</p>
+          <p class="mt-1 text-sm text-ink-soft">
+            Tabelas de INSS e IRRF de 2026, incluindo a redução da Lei 15.270/2025.
+          </p>
+        </div>
+        <div>
+          <p class="font-medium text-ink">Cálculo transparente</p>
+          <p class="mt-1 text-sm text-ink-soft">
+            Veja cada faixa de INSS e cada etapa do IRRF, não apenas o resultado final.
+          </p>
+        </div>
+        <div>
+          <p class="font-medium text-ink">Gratuito, sem cadastro</p>
+          <p class="mt-1 text-sm text-ink-soft">Sem conta, sem e-mail, sem limite de uso.</p>
+        </div>
+        <div>
+          <p class="font-medium text-ink">Cálculo no navegador</p>
+          <p class="mt-1 text-sm text-ink-soft">
+            Os valores de salário que você digita não precisam ser enviados a um servidor.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-5xl px-5 py-16" data-reveal>
+    <h2 class="font-display text-2xl font-semibold text-ink">Do bruto ao líquido, em etapas</h2>
+    <p class="mt-2 max-w-2xl text-ink-soft">
+      Toda calculadora do Salário Claro mostra o caminho completo, não só o destino.
+    </p>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-stretch">
+      {
+        [
+          ['Salário bruto', 'O valor combinado antes de qualquer desconto.'],
+          ['INSS', 'Contribuição previdenciária, calculada por faixa progressiva.'],
+          ['IRRF', 'Imposto de renda retido na fonte, já com a redução de 2026.'],
+          ['Outros descontos', 'Vale-transporte, plano de saúde e outros valores que você informar.'],
+          ['Salário líquido', 'O que efetivamente cai na sua conta.'],
+        ].map(([label, desc], i, arr) => (
+          <div class="flex flex-1 items-center gap-3" data-reveal style={`transition-delay: ${i * 80}ms`}>
+            <div class="card-premium flex-1 rounded-lg p-4">
+              <p class="font-medium text-ink">{label}</p>
+              <p class="mt-1 text-xs text-ink-soft">{desc}</p>
+            </div>
+            {i < arr.length - 1 && (
+              <span class="hidden text-line sm:block" aria-hidden="true">
+                →
+              </span>
+            )}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="bg-paper-raised py-16" data-reveal>
+    <div class="mx-auto max-w-2xl px-5">
+      <div class="prose-custom space-y-8 text-ink">
+        <section>
+          <h2 class="font-display text-2xl font-semibold">Calculadora de salário líquido</h2>
+          <p class="mt-3 text-ink-soft">
+            A calculadora de salário líquido do Salário Claro estima quanto você recebe por mês a
+            partir do seu salário bruto, considerando os descontos de INSS e IRRF previstos para
+            2026. Basta informar o valor combinado com o empregador e o número de dependentes para
+            ver o resultado detalhado, faixa por faixa, não apenas um número final. É uma
+            ferramenta útil tanto para quem já trabalha e quer entender o próprio holerite quanto
+            para quem está avaliando uma proposta de emprego.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-display text-2xl font-semibold">Como funciona o cálculo do salário líquido?</h2>
+          <p class="mt-3 text-ink-soft">
+            O cálculo segue uma sequência fixa. Primeiro, o INSS é descontado do salário bruto de
+            forma progressiva: cada faixa salarial tem sua própria alíquota, aplicada apenas sobre
+            a parcela do salário que se enquadra naquela faixa, não sobre o salário inteiro. Em
+            seguida, calcula-se o IRRF sobre uma base que já considera a dedução mais vantajosa
+            entre o desconto simplificado (um valor fixo) e a soma das deduções legais (INSS,
+            dependentes e pensão alimentícia). Por fim, a Lei 15.270/2025 pode reduzir ou zerar o
+            imposto apurado, dependendo do valor do salário bruto. Por exemplo, um salário bruto de
+            R$ 3.000,00 tem o INSS calculado em três faixas diferentes, e o IRRF resultante costuma
+            ser zerado pela redução de 2026. O que sobra depois de todos esses descontos é o
+            salário líquido.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-display text-2xl font-semibold">Qual é a diferença entre salário bruto e salário líquido?</h2>
+          <p class="mt-3 text-ink-soft">
+            Salário bruto é o valor definido no contrato de trabalho, antes de qualquer desconto.
+            Salário líquido é o valor que efetivamente cai na conta todos os meses, depois de
+            descontados o INSS, o IRRF e eventuais outros valores, como vale-transporte ou plano de
+            saúde quando descontados em folha. A diferença entre os dois pode ser significativa,
+            principalmente para quem tem salário mais alto ou não declara dependentes.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-display text-2xl font-semibold">Quais descontos são considerados?</h2>
+          <p class="mt-3 text-ink-soft">
+            A calculadora considera o INSS, calculado pela tabela progressiva de 2026, e o IRRF,
+            que usa a tabela de imposto de renda do mesmo ano, incluindo a redução criada pela Lei
+            15.270/2025 para quem tem salário bruto até R$ 7.350,00. O número de dependentes
+            informado também entra no cálculo, já que cada um gera uma dedução que pode reduzir o
+            imposto devido. Você também pode informar pensão alimentícia, que é uma dedução legal
+            reconhecida pela Receita Federal, e outros descontos genéricos, como vale-transporte
+            ou plano de saúde, que afetam o valor final recebido, ainda que não alterem a base de
+            cálculo do imposto.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-display text-2xl font-semibold">Por que o salário líquido pode mudar?</h2>
+          <p class="mt-3 text-ink-soft">
+            O salário líquido não é uma fração fixa do salário bruto: ele muda conforme a faixa de
+            INSS em que o salário se enquadra, o número de dependentes declarados, a existência de
+            pensão alimentícia e outros descontos informados. Duas pessoas com o mesmo salário
+            bruto podem receber valores líquidos diferentes dependendo desses fatores. Além disso,
+            como o INSS e o IRRF são definidos por lei, o valor líquido também muda quando a
+            legislação é atualizada. Por isso, a calculadora sempre indica o ano das regras
+            utilizadas no cálculo.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-display text-2xl font-semibold">Salário Claro: cálculo simples e transparente</h2>
+          <p class="mt-3 text-ink-soft">
+            Diferente de uma calculadora que mostra só o resultado final, o Salário Claro exibe
+            cada etapa: quanto foi descontado de INSS por faixa, qual dedução foi usada no cálculo
+            do IRRF (simplificada ou legal) e como a redução de 2026 foi aplicada. O cálculo roda
+            inteiramente no seu navegador: os valores de salário que você digita não são enviados
+            a nenhum servidor para gerar o resultado. Para entender a metodologia completa e ver as
+            fontes oficiais usadas na calculadora de salário, veja
+            <a href="/como-calculamos/" class="text-ink underline hover:text-accent-ink">como calculamos o salário líquido</a>.
+          </p>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16" data-reveal>
+    <div class="mx-auto max-w-3xl px-5">
+      <h2 class="font-display text-2xl font-semibold text-ink">Perguntas frequentes</h2>
+      <dl class="mt-8 space-y-6">
+        {
+          faqs.map((f) => (
+            <div>
+              <dt class="font-medium text-ink">{f.q}</dt>
+              <dd class="mt-1 text-sm text-ink-soft">{f.a}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+</Layout>

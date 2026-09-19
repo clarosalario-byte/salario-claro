@@ -1,0 +1,169 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { RULES_2026 } from '../../lib/calculations/salary';
+import { organizationRef, breadcrumbSchema, SITE_URL } from '../../lib/seo/schema';
+
+const title = 'Como calculamos o salário líquido | Salário Claro';
+const description =
+  'Entenda a metodologia por trás da calculadora: como o INSS e o IRRF são calculados, como funciona a redução de 2026, e quais são os limites do cálculo.';
+
+const articleSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: 'Como calculamos o salário líquido',
+  description,
+  url: `${SITE_URL}/como-calculamos/`,
+  inLanguage: 'pt-BR',
+  dateModified: RULES_2026.lastVerified,
+  author: organizationRef(),
+  publisher: organizationRef(),
+};
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Como calculamos', path: '/como-calculamos/' },
+]);
+---
+
+<Layout
+  title={title}
+  description={description}
+  path="/como-calculamos/"
+  structuredData={[articleSchema, breadcrumb]}
+>
+  <article class="mx-auto max-w-2xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink">Como calculamos</h1>
+    <p class="mt-3 text-ink-soft">
+      Esta página explica, sem juridiquês, como a calculadora chega ao salário líquido, e o que
+      ela não cobre.
+    </p>
+
+    <div class="prose-custom mt-10 space-y-8 text-ink">
+      <section>
+        <h2 class="font-display text-xl font-semibold">Salário bruto e salário líquido</h2>
+        <p class="mt-2 text-ink-soft">
+          Salário bruto é o valor combinado no contrato de trabalho, antes de qualquer desconto.
+          Salário líquido é o que efetivamente cai na conta, depois de descontados o INSS, o IRRF
+          e outros valores (como vale-transporte, se aplicável).
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Como o INSS é calculado</h2>
+        <p class="mt-2 text-ink-soft">
+          O INSS é progressivo: o salário é dividido em faixas, e cada faixa tem sua própria
+          alíquota. Ninguém paga a alíquota mais alta sobre o salário inteiro: cada parte do
+          salário é tributada pela alíquota da faixa em que ela se encaixa. Salários acima do teto
+          de contribuição não geram desconto adicional além do teto.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Como o IRRF é calculado</h2>
+        <p class="mt-2 text-ink-soft">
+          Primeiro, calculamos a base de cálculo do imposto: salário bruto menos a dedução mais
+          vantajosa entre (a) o desconto simplificado mensal, de valor fixo, ou (b) a soma das
+          deduções legais permitidas (INSS pago, dependentes, pensão alimentícia). Em seguida,
+          aplicamos a tabela progressiva do IRRF sobre essa base para chegar ao imposto antes da
+          redução.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Dependentes</h2>
+        <p class="mt-2 text-ink-soft">
+          Cada dependente declarado gera uma dedução fixa mensal, que só é usada quando a soma das
+          deduções legais (INSS + dependentes + pensão) é maior que o desconto simplificado.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">O desconto simplificado</h2>
+        <p class="mt-2 text-ink-soft">
+          É um valor fixo mensal que substitui todas as deduções legais de uma vez. A fonte
+          pagadora deve usar o que for mais vantajoso para quem recebe o salário: o desconto
+          simplificado ou a soma das deduções legais reais.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">A redução de 2026 (Lei 15.270/2025)</h2>
+        <p class="mt-2 text-ink-soft">
+          A partir de 2026, quem tem rendimento tributável (o salário bruto, não a base de
+          cálculo) até R$ 5.000,00 tem direito a uma redução que zera o imposto apurado pela
+          tabela progressiva. Entre R$ 5.000,01 e R$ 7.350,00, a redução diminui de forma linear
+          até zerar. Acima de R$ 7.350,00, não há redução: o imposto segue integralmente a tabela
+          progressiva. Importante: essa comparação usa o salário bruto, não a base de cálculo já
+          com deduções.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Outros descontos</h2>
+        <p class="mt-2 text-ink-soft">
+          Valores informados como "outros descontos" (por exemplo, vale-transporte ou plano de
+          saúde) reduzem apenas o salário líquido final. Eles não têm tratamento tributário
+          específico implementado nesta calculadora, então não alteram a base de cálculo do IRRF.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">O que a calculadora não cobre</h2>
+        <p class="mt-2 text-ink-soft">
+          A calculadora de salário líquido ainda não trata horas extras, adicionais, comissões,
+          previdência privada dedutível, despesas com instrução ou saúde declaradas no ajuste
+          anual, nem convenções coletivas específicas de categoria. Esses fatores podem gerar
+          diferenças entre o resultado aqui e o holerite real. Veja todas as calculadoras já
+          publicadas em <a href="/calculadoras/" class="text-ink underline hover:text-accent-ink">/calculadoras/</a>.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Rescisão CLT</h2>
+        <p class="mt-2 text-ink-soft">
+          As verbas devidas mudam conforme o tipo de desligamento: dispensa sem justa causa,
+          pedido de demissão, dispensa por justa causa, ou acordo mútuo (art. 484-A da CLT). O
+          aviso prévio proporcional segue a Lei 12.506/2011 (30 dias + 3 dias por ano completo de
+          serviço, até 90). Férias e 13º proporcionais não são devidos em dispensa por justa causa
+          (Súmula 171 do TST). A multa do FGTS é de 40% (dispensa sem justa causa) ou 20% (acordo).
+          <strong>Limitação importante:</strong> quando o aviso prévio é indenizado, a Súmula 371
+          do TST determina a projeção da data de saída para efeito de contagem de tempo de
+          serviço, o que pode aumentar as verbas proporcionais. Esta calculadora NÃO aplica essa
+          projeção, o que pode subestimar levemente o valor devido nesse cenário específico.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Férias e 13º salário</h2>
+        <p class="mt-2 text-ink-soft">
+          O INSS e o IRRF sobre férias e 13º salário são calculados em separado do salário mensal,
+          usando a mesma tabela progressiva, mas cada um com sua própria base. No 13º, o imposto
+          incide sobre o valor integral do ano e é descontado inteiramente na 2ª parcela; a Lei
+          15.270/2025 prevê expressamente, em seu §3º, que a redução de 2026 também vale para o 13º.
+          Nas férias, o INSS e o IRRF incidem sobre a remuneração de férias somada ao terço
+          constitucional; o abono pecuniário (venda de até 10 dias) e seu terço são isentos de
+          ambos. A lei não menciona as férias de forma explícita para a redução de 2026, mas aplicamos
+          a mesma redução por consistência com a tabela progressiva mensal, mas, sem um exemplo
+          oficial específico para férias, trate essa parte como a interpretação mais provável, não
+          uma certeza absoluta.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Fontes oficiais utilizadas</h2>
+        <ul class="mt-2 list-disc space-y-1 pl-5 text-ink-soft">
+          {RULES_2026.sources.map((s) => (
+            <li>
+              <a href={s.url} class="text-ink underline hover:text-accent-ink" target="_blank" rel="noopener noreferrer">
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="mt-3 text-xs text-ink-soft">
+          Regras verificadas pela última vez em {new Date(RULES_2026.lastVerified).toLocaleDateString('pt-BR')}.
+        </p>
+      </section>
+    </div>
+  </article>
+</Layout>

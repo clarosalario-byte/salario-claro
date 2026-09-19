@@ -1,0 +1,249 @@
+@import 'tailwindcss';
+
+/*
+  Design system — Salário Claro
+  ==============================
+  Concept: "clareza" (clarity). Light mode leans toward light, precision-
+  instrument tones (cool paper, blue-black ink, one warm amber accent).
+  Dark mode leans cinematic: true near-black surfaces (not navy) with
+  near-white text and the same amber accent carrying the brand through,
+  glows and layered shadows for depth instead of gradients.
+*/
+
+@theme {
+  /* Color: cool paper background + blue-ink text + one warm accent */
+  --color-paper: #f5f6f9;
+  --color-paper-raised: #ffffff;
+  --color-ink: #10192e;
+  --color-ink-soft: #4a5568;
+  --color-line: #dde1ea;
+  --color-accent: #d98f0a;
+  --color-accent-ink: #7a4d05;
+  --color-accent-soft: #fbead0;
+  --color-good: #1f7a4d;
+  --color-bad: #b3401f;
+
+  /* Type */
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-sans: 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/*
+  Card depth
+  ----------
+  A precise, layered shadow (never a gradient) is what separates a "premium
+  utility" feel from a flat bordered box. Two shadow layers: a tight
+  near-black shadow for definition right at the edge, and a soft, diffuse
+  one for ambient lift. Dark mode adds a faint amber glow on top of the
+  black-on-black shadow, since a plain dark shadow disappears against a
+  near-black background.
+*/
+:root {
+  --shadow-card: 0 1px 2px rgba(16, 25, 46, 0.05), 0 12px 28px -16px rgba(16, 25, 46, 0.18);
+  --shadow-card-hover: 0 1px 2px rgba(16, 25, 46, 0.06), 0 16px 32px -14px rgba(16, 25, 46, 0.22);
+}
+
+/*
+  Dark mode
+  ---------
+  Every utility in this project (bg-paper, text-ink, border-line, etc.)
+  reads its color from the CSS custom properties defined above. Dark mode
+  is implemented by re-declaring those same variables under a `.dark`
+  class on <html> — every existing component gets a dark theme for free,
+  with no `dark:` variant needed on individual elements. The `.dark` class
+  is toggled by the inline script in Layout.astro (which also avoids a
+  flash of the wrong theme on load).
+
+  True near-black surfaces (not navy) and near-white text, per feedback
+  that the previous navy-tinted dark background read as "blue".
+*/
+.dark {
+  --color-paper: #08090b;
+  --color-paper-raised: #131417;
+  --color-ink: #f7f7f8;
+  --color-ink-soft: #a3a5ab;
+  --color-line: #64666c; /* WCAG 1.4.11 non-text contrast: ≥3:1 against both --color-paper and --color-paper-raised, verified — needed since this also draws input/button borders, not just decorative dividers */
+  --color-accent: #eab34a;
+  --color-accent-ink: #f6d190;
+  --color-accent-soft: #2e2311;
+  --color-good: #4ade80;
+  --color-bad: #ff8a65;
+
+  --shadow-card: 0 0 0 1px rgba(255, 255, 255, 0.04) inset, 0 16px 36px -16px rgba(0, 0, 0, 0.7);
+  --shadow-card-hover: 0 0 0 1px rgba(234, 179, 74, 0.18) inset, 0 0 0 1px rgba(234, 179, 74, 0.08),
+    0 20px 44px -14px rgba(0, 0, 0, 0.75), 0 0 32px -8px rgba(234, 179, 74, 0.12);
+}
+
+@layer base {
+  html {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background-color: var(--color-paper);
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-accent-soft);
+    color: var(--color-accent-ink);
+  }
+
+  /*
+    Native <select> dropdown popups don't reliably inherit color-scheme in
+    every browser/OS combination (a known Chromium-on-Windows quirk: the
+    closed control themes correctly, but the open options list can fall
+    back to the OS theme instead of the page's dark mode, rendering
+    low-contrast text on a white popup). Setting background/color
+    explicitly on both the control and its options forces the popup to use
+    our actual palette instead of guessing.
+  */
+  select {
+    background-color: var(--color-paper-raised);
+    color: var(--color-ink);
+  }
+  select option {
+    background-color: var(--color-paper-raised);
+    color: var(--color-ink);
+  }
+}
+
+@layer utilities {
+  .tabular-money {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Premium card: crisp border + layered shadow instead of a flat box or a gradient. */
+  .card-premium {
+    border: 1px solid var(--color-line);
+    border-radius: 0.875rem;
+    background-color: var(--color-paper-raised);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  }
+  .card-premium:hover {
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  /* Primary button: solid ink with a faint inner top highlight for depth (no gradient). */
+  .btn-primary {
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  }
+  .btn-primary:hover {
+    background-color: var(--color-accent-ink);
+  }
+  .dark .btn-primary:hover {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 0 20px -4px rgba(234, 179, 74, 0.4);
+  }
+  .btn-primary:active {
+    transform: translateY(1px);
+  }
+
+  .btn-outline {
+    border: 1px solid var(--color-line);
+    color: var(--color-ink);
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.2s ease;
+  }
+  .btn-outline:hover {
+    border-color: var(--color-ink);
+    background-color: var(--color-paper);
+  }
+  .dark .btn-outline:hover {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 16px -6px rgba(234, 179, 74, 0.35);
+  }
+
+  /*
+    Cinematic scroll reveal: sections fade/slide in as they enter the
+    viewport. Applied via a tiny IntersectionObserver in Layout.astro
+    (data-reveal attribute) — CSS-only fallback state below so content is
+    never hidden if JS fails to run.
+  */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  [data-reveal].is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .no-js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Print styles for the calculator result (Section 19.F: "Imprimir resultado") */
+/*
+  Hero texture
+  ------------
+  A full-bleed, edge-to-edge treatment for the homepage hero: a base
+  background color, plus an inset box-shadow vignette for cinematic depth
+  at the edges. The actual illustration (finance-themed doodles: coins,
+  chart lines, a calculator glyph, a document glyph) is a separate inline
+  <svg> element in index.astro, not a CSS background — that's what lets it
+  scale via preserveAspectRatio and genuinely reach every edge instead of
+  tiling. Deliberately built without the CSS `gradient` function anywhere,
+  per the site's no-gradients design rule — the vignette here comes from a
+  shadow, not a color blend.
+*/
+.hero-texture {
+  background-color: var(--color-paper);
+  box-shadow: inset 0 -80px 100px -60px rgba(0, 0, 0, 0.06);
+}
+.dark .hero-texture {
+  box-shadow: inset 0 -100px 140px -60px rgba(0, 0, 0, 0.55);
+}
+
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}

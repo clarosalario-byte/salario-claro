@@ -1,0 +1,33 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const title = 'Página não encontrada | Salário Claro';
+const description = 'A página que você procura não existe ou foi movida.';
+---
+
+<Layout title={title} description={description} path="/404/" robots="noindex, nofollow">
+  <section class="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-start justify-center px-5 py-16">
+    <p class="font-display text-sm font-semibold text-accent-ink">Erro 404</p>
+    <h1 class="mt-2 font-display text-3xl font-semibold text-ink sm:text-4xl">
+      Não encontramos essa página.
+    </h1>
+    <p class="mt-3 text-ink-soft">
+      O endereço pode ter mudado ou nunca ter existido. Que tal calcular seu salário líquido
+      enquanto está aqui?
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        href="/calculadoras/salario-liquido/"
+        class="btn-primary rounded-md px-6 py-3 text-sm font-medium"
+      >
+        Ir para a calculadora
+      </a>
+      <a
+        href="/"
+        class="btn-outline rounded-md px-6 py-3 text-sm font-medium"
+      >
+        Voltar ao início
+      </a>
+    </div>
+  </section>
+</Layout>

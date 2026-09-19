@@ -1,0 +1,77 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { breadcrumbSchema } from '../../lib/seo/schema';
+
+const title = 'Privacidade: Como o Salário Claro Trata seus Dados';
+const description =
+  'Como o Salário Claro trata os dados inseridos na calculadora: o que calculamos no seu navegador, o que nunca coletamos, e como o Google Analytics é usado.';
+
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Privacidade', path: '/privacidade/' },
+]);
+---
+<Layout title={title} description={description} path="/privacidade/" structuredData={[breadcrumb]}>
+  <article class="mx-auto max-w-2xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Privacidade</h1>
+    <p class="mt-3 text-ink-soft">Em resumo: seu salário fica no seu navegador. Aqui está o detalhe de tudo.</p>
+
+    <div class="prose-custom mt-10 space-y-8 text-ink">
+      <section>
+        <h2 class="font-display text-xl font-semibold">O que calculamos no seu navegador</h2>
+        <p class="mt-2 text-ink-soft">
+          Salário bruto, número de dependentes, outros descontos e pensão alimentícia são
+          processados inteiramente no seu navegador, usando JavaScript que roda no seu próprio
+          aparelho. Nenhum desses valores é enviado a um servidor para gerar o resultado: o cálculo
+          acontece localmente, mesmo que você esteja online.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">O que nunca armazenamos</h2>
+        <p class="mt-2 text-ink-soft">
+          Não guardamos os valores de salário que você digita. Eles não são salvos em cookies, não
+          ficam em armazenamento local do navegador por padrão, e não aparecem em nenhum registro de
+          acesso do servidor.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Link de compartilhamento (opcional)</h2>
+        <p class="mt-2 text-ink-soft">
+          Se você usar o botão "Compartilhar" no resultado, os valores que você informou são
+          codificados no próprio link, não em um servidor nosso, mas de forma visível para quem
+          tiver acesso a esse link específico (por exemplo, no histórico do navegador ou em um
+          aplicativo de mensagens). Esse link só é criado quando você clica em compartilhar; a
+          calculadora nunca faz isso automaticamente.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Google Analytics</h2>
+        <p class="mt-2 text-ink-soft">
+          Usamos o Google Analytics para entender, de forma agregada, quais páginas recebem mais
+          acesso e de quais tipos de dispositivo. Ele usa cookies e pode coletar dados como endereço
+          IP e navegador utilizado, conforme a
+          <a
+            href="https://policies.google.com/privacy"
+            class="text-ink underline hover:text-accent-ink"
+            target="_blank"
+            rel="noopener noreferrer">política de privacidade do Google</a
+          >. Os valores de salário, dependentes e demais campos da calculadora nunca são enviados ao
+          Google Analytics.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="font-display text-xl font-semibold">Seus direitos</h2>
+        <p class="mt-2 text-ink-soft">
+          Como não coletamos nem armazenamos dados pessoais identificáveis através da calculadora,
+          não há um perfil seu para acessar, corrigir ou excluir em nossos sistemas. Se você tiver
+          dúvidas específicas sobre isso, escreva para
+          <a href="/contato/" class="text-ink underline hover:text-accent-ink">contato</a>.
+        </p>
+      </section>
+    </div>
+  </article>
+</Layout>

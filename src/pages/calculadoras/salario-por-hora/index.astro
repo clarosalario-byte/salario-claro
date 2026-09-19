@@ -1,0 +1,249 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import ResultActions from '../../../components/ResultActions.astro';
+import AllCalculatorsNav from '../../../components/AllCalculatorsNav.astro';
+import { organizationRef, breadcrumbSchema, SITE_URL } from '../../../lib/seo/schema';
+
+const title = 'Calculadora de Salário por Hora | Salário Claro';
+const description =
+  'Converta salário mensal em valor da hora (ou o contrário), com o divisor correto pela sua jornada semanal: 220 para 44h, 200 para 40h (Súmula 431/TST).';
+
+const webAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  '@id': `${SITE_URL}/calculadoras/salario-por-hora/#webapplication`,
+  name: 'Calculadora de Salário por Hora',
+  url: `${SITE_URL}/calculadoras/salario-por-hora/`,
+  applicationCategory: 'FinanceApplication',
+  operatingSystem: 'Any (navegador web)',
+  offers: { '@type': 'Offer', price: '0', priceCurrency: 'BRL' },
+  publisher: organizationRef(),
+};
+const breadcrumb = breadcrumbSchema([
+  { name: 'Início', path: '/' },
+  { name: 'Calculadoras', path: '/calculadoras/' },
+  { name: 'Salário por Hora', path: '/calculadoras/salario-por-hora/' },
+]);
+---
+<Layout title={title} description={description} path="/calculadoras/salario-por-hora/" structuredData={[webAppSchema, breadcrumb]}>
+  <section class="mx-auto max-w-3xl px-5 py-12">
+    <h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">Calculadora de salário por hora</h1>
+    <p class="mt-3 text-ink-soft">
+      Converte salário mensal em valor da hora, usando o divisor correto pela sua jornada semanal.
+    </p>
+
+    <form id="calc-form" class="card-premium mt-8 space-y-5 rounded-xl p-6" novalidate>
+      <fieldset class="flex gap-4 text-sm">
+        <legend class="mb-2 block text-sm font-medium text-ink">Direção do cálculo</legend>
+        <label class="flex items-center gap-2"><input type="radio" name="direction" value="toHourly" checked /> Mensal → hora</label>
+        <label class="flex items-center gap-2"><input type="radio" name="direction" value="toMonthly" /> Hora → mensal</label>
+      </fieldset>
+
+      <div id="monthly-field">
+        <label for="monthlySalary" class="block text-sm font-medium text-ink">Salário mensal</label>
+        <div class="mt-1.5 flex max-w-xs items-center rounded-md border border-line focus-within:border-ink">
+          <span class="pl-3 text-ink-soft">R$</span>
+          <input type="text" inputmode="decimal" id="monthlySalary" placeholder="2.200,00"
+            class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none" />
+        </div>
+      </div>
+
+      <div id="hourly-field" class="hidden">
+        <label for="hourlyRate" class="block text-sm font-medium text-ink">Valor da hora</label>
+        <div class="mt-1.5 flex max-w-xs items-center rounded-md border border-line focus-within:border-ink">
+          <span class="pl-3 text-ink-soft">R$</span>
+          <input type="text" inputmode="decimal" id="hourlyRate" placeholder="10,00"
+            class="w-full rounded-md bg-transparent px-2 py-2.5 tabular-money outline-none" />
+        </div>
+      </div>
+      <p id="value-error" class="text-sm text-bad" role="alert"></p>
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <div>
+          <label for="weeklyHours" class="block text-sm font-medium text-ink">Jornada semanal</label>
+          <select id="weeklyHours" class="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-ink">
+            <option value="44" selected>44 horas (divisor 220)</option>
+            <option value="40">40 horas (divisor 200, Súmula 431/TST)</option>
+            <option value="36">36 horas</option>
+            <option value="30">30 horas</option>
+            <option value="custom">Outra jornada…</option>
+          </select>
+        </div>
+        <div id="custom-hours-field" class="hidden">
+          <label for="customWeeklyHours" class="block text-sm font-medium text-ink">Horas semanais</label>
+          <input type="number" id="customWeeklyHours" min="1" max="44" step="1"
+            class="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-ink" />
+        </div>
+        <div id="workdays-field">
+          <label for="workDaysPerWeek" class="block text-sm font-medium text-ink">Dias úteis por semana</label>
+          <input type="number" id="workDaysPerWeek" min="1" max="7" value="6"
+            class="mt-1.5 w-full rounded-md border border-line px-3 py-2.5 outline-none focus:border-ink" />
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary rounded-md px-6 py-2.5 text-sm font-medium">Calcular</button>
+    </form>
+
+    <div id="result" class="card-premium mt-8 hidden rounded-xl p-6" aria-live="polite">
+      <p id="result-label" class="text-sm text-ink-soft">Valor da hora</p>
+      <p id="result-value" class="mt-1 font-display text-4xl font-semibold tabular-money text-ink"></p>
+      <p id="result-detail" class="mt-3 text-sm text-ink-soft"></p>
+      <ResultActions />
+    </div>
+
+    <div class="prose-custom mt-12 space-y-4 text-ink">
+      <h2 class="font-display text-xl font-semibold">Como calculamos</h2>
+      <p class="text-ink-soft">
+        A fórmula geral vem do art. 64 da CLT: divisor = (horas semanais ÷ dias úteis por semana) ×
+        30. Para 44 horas semanais em 6 dias úteis, isso dá o divisor 220, a referência mais comum
+        no Brasil. Para jornadas de 40 horas semanais, a Súmula nº 431 do TST fixa o divisor em 200,
+        independentemente dos dias úteis informados. Essa é uma exceção vinculante que a
+        calculadora aplica automaticamente.
+      </p>
+    </div>
+    <AllCalculatorsNav currentPath="/calculadoras/salario-por-hora/" />
+  </section>
+</Layout>
+
+<script>
+  import { calculateHourlyRate, calculateMonthlyFromHourly } from '../../../lib/calculations/hourly';
+  import { formatBRL } from '../../../lib/calculations/salary';
+  import { downloadResultImage, copyResultText, shareResult, flashButtonText } from '../../../lib/ui/resultActions';
+
+  function parseBRLNumber(raw: string): number {
+    if (!raw || raw.trim() === '') return NaN;
+    const cleaned = raw.replace(/\s/g, '');
+    const hasComma = cleaned.includes(',');
+    const normalized = hasComma ? cleaned.replace(/\./g, '').replace(',', '.') : cleaned;
+    return parseFloat(normalized);
+  }
+
+  const monthlyField = document.getElementById('monthly-field')!;
+  const hourlyField = document.getElementById('hourly-field')!;
+  document.querySelectorAll('input[name="direction"]').forEach((el) => {
+    el.addEventListener('change', (e) => {
+      const toHourly = (e.target as HTMLInputElement).value === 'toHourly';
+      monthlyField.classList.toggle('hidden', !toHourly);
+      hourlyField.classList.toggle('hidden', toHourly);
+    });
+  });
+
+  const weeklyHoursSelect = document.getElementById('weeklyHours') as HTMLSelectElement;
+  const customHoursField = document.getElementById('custom-hours-field')!;
+  weeklyHoursSelect.addEventListener('change', () => {
+    customHoursField.classList.toggle('hidden', weeklyHoursSelect.value !== 'custom');
+  });
+
+  const form = document.getElementById('calc-form') as HTMLFormElement;
+  const resultEl = document.getElementById('result') as HTMLDivElement;
+
+  let lastLabel = '';
+  let lastValue = '';
+  let lastDetail = '';
+  let lastRows: { label: string; value: string; emphasis?: boolean }[] = [];
+  let lastShareParams: Record<string, string | number> = {};
+
+  (function loadFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const dir = params.get('dir');
+    if (!dir) return;
+
+    if (params.has('wh')) {
+      const wh = params.get('wh')!;
+      const knownOption = Array.from(weeklyHoursSelect.options).some((o) => o.value === wh);
+      weeklyHoursSelect.value = knownOption ? wh : 'custom';
+      if (!knownOption) {
+        customHoursField.classList.remove('hidden');
+        (document.getElementById('customWeeklyHours') as HTMLInputElement).value = wh;
+      }
+    }
+    if (params.has('wd')) (document.getElementById('workDaysPerWeek') as HTMLInputElement).value = params.get('wd')!;
+
+    if (dir === 'm') {
+      (document.querySelector('input[name="direction"][value="toMonthly"]') as HTMLInputElement).checked = true;
+      monthlyField.classList.add('hidden');
+      hourlyField.classList.remove('hidden');
+      if (params.has('hr')) (document.getElementById('hourlyRate') as HTMLInputElement).value = (params.get('hr') ?? '').replace('.', ',');
+    } else if (params.has('s')) {
+      (document.getElementById('monthlySalary') as HTMLInputElement).value = (params.get('s') ?? '').replace('.', ',');
+    }
+
+    form.requestSubmit();
+  })();
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    (document.getElementById('value-error') as HTMLElement).textContent = '';
+
+    const direction = (document.querySelector('input[name="direction"]:checked') as HTMLInputElement).value;
+    const weeklyHours =
+      weeklyHoursSelect.value === 'custom'
+        ? parseInt((document.getElementById('customWeeklyHours') as HTMLInputElement).value || '0', 10)
+        : parseInt(weeklyHoursSelect.value, 10);
+    const workDaysPerWeek = parseInt((document.getElementById('workDaysPerWeek') as HTMLInputElement).value || '6', 10);
+
+    try {
+      if (direction === 'toHourly') {
+        const monthlySalary = parseBRLNumber((document.getElementById('monthlySalary') as HTMLInputElement).value);
+        const result = calculateHourlyRate({ monthlySalary, weeklyHours, workDaysPerWeek });
+        lastLabel = 'Valor da hora';
+        lastValue = formatBRL(result.hourlyRate);
+        lastDetail = `${formatBRL(result.monthlySalary)} ÷ ${result.divisor} (divisor${result.divisorSource === 'sumula-431' ? ', Súmula 431/TST' : ''})`;
+        lastRows = [
+          { label: 'Salário mensal', value: formatBRL(result.monthlySalary) },
+          { label: 'Divisor', value: String(result.divisor) },
+          { label: 'Valor da hora', value: formatBRL(result.hourlyRate), emphasis: true },
+        ];
+        lastShareParams = { dir: 'h', s: result.monthlySalary, wh: result.weeklyHours, wd: result.workDaysPerWeek };
+        (document.getElementById('result-label') as HTMLElement).textContent = lastLabel;
+        (document.getElementById('result-value') as HTMLElement).textContent = lastValue;
+        (document.getElementById('result-detail') as HTMLElement).textContent = lastDetail;
+      } else {
+        const hourlyRate = parseBRLNumber((document.getElementById('hourlyRate') as HTMLInputElement).value);
+        const result = calculateMonthlyFromHourly({ hourlyRate, weeklyHours, workDaysPerWeek });
+        lastLabel = 'Salário mensal equivalente';
+        lastValue = formatBRL(result.monthlySalary);
+        lastDetail = `${formatBRL(result.hourlyRate)} × ${result.divisor} (divisor${result.divisorSource === 'sumula-431' ? ', Súmula 431/TST' : ''})`;
+        lastRows = [
+          { label: 'Valor da hora', value: formatBRL(result.hourlyRate) },
+          { label: 'Divisor', value: String(result.divisor) },
+          { label: 'Salário mensal equivalente', value: formatBRL(result.monthlySalary), emphasis: true },
+        ];
+        lastShareParams = { dir: 'm', hr: result.hourlyRate, wh: result.weeklyHours, wd: result.workDaysPerWeek };
+        (document.getElementById('result-label') as HTMLElement).textContent = lastLabel;
+        (document.getElementById('result-value') as HTMLElement).textContent = lastValue;
+        (document.getElementById('result-detail') as HTMLElement).textContent = lastDetail;
+      }
+      resultEl.classList.remove('hidden');
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Entrada inválida.';
+      (document.getElementById('value-error') as HTMLElement).textContent = msg;
+      resultEl.classList.add('hidden');
+    }
+  });
+
+  document.getElementById('action-print')?.addEventListener('click', () => window.print());
+
+  document.getElementById('action-copy')?.addEventListener('click', async (e) => {
+    if (!lastValue) return;
+    const ok = await copyResultText([lastLabel, lastValue, lastDetail]);
+    if (ok) flashButtonText(e.currentTarget as HTMLButtonElement, 'Copiado!');
+  });
+
+  document.getElementById('action-share')?.addEventListener('click', async (e) => {
+    if (!lastValue) return;
+    const outcome = await shareResult(lastShareParams, `${lastLabel}: ${lastValue}, calculado no Salário Claro`);
+    if (outcome === 'copied') flashButtonText(e.currentTarget as HTMLButtonElement, 'Link copiado!');
+  });
+
+  document.getElementById('action-download')?.addEventListener('click', () => {
+    if (!lastValue) return;
+    downloadResultImage({
+      title: lastLabel,
+      bigValue: lastValue,
+      rows: lastRows,
+      filename: 'salario-por-hora-salarioclaro',
+    });
+  });
+</script>

@@ -1,0 +1,39 @@
+---
+interface Props {
+  /** Path of the current page, so it can be excluded/highlighted instead of linking to itself. */
+  currentPath: string;
+}
+const { currentPath } = Astro.props;
+
+const allCalculators = [
+  { name: 'Salário Líquido', path: '/calculadoras/salario-liquido/' },
+  { name: 'Salário Proporcional', path: '/calculadoras/salario-proporcional/' },
+  { name: 'Salário por Hora', path: '/calculadoras/salario-por-hora/' },
+  { name: 'Dias Trabalhados', path: '/calculadoras/dias-trabalhados/' },
+  { name: 'Férias', path: '/calculadoras/ferias/' },
+  { name: '13º Salário', path: '/calculadoras/13-salario/' },
+  { name: 'FGTS', path: '/calculadoras/fgts/' },
+  { name: 'Rescisão CLT', path: '/calculadoras/rescisao/' },
+  { name: 'INSS', path: '/calculadoras/inss/' },
+  { name: 'IRRF', path: '/calculadoras/irrf/' },
+];
+---
+<div class="mt-12 border-t border-line pt-8">
+  <p class="text-sm font-medium text-ink">Todas as calculadoras</p>
+  <p class="mt-1 text-xs text-ink-soft">Troque de ferramenta sem precisar voltar ao início.</p>
+  <div class="mt-3 flex flex-wrap gap-2 text-sm">
+    {
+      allCalculators.map((calc) =>
+        calc.path === currentPath ? (
+          <span class="rounded-md border border-line bg-paper px-3 py-1.5 text-ink-soft" aria-current="page">
+            {calc.name}
+          </span>
+        ) : (
+          <a href={calc.path} class="btn-outline rounded-md px-3 py-1.5">
+            {calc.name}
+          </a>
+        )
+      )
+    }
+  </div>
+</div>
