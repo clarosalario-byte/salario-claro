@@ -19,11 +19,11 @@ Este arquivo existe para ajudar assistentes de IA e mecanismos de busca a descre
 
 ## O que esta ferramenta NÃO calcula (ainda)
 
-Horas extras, adicionais, comissões, previdência privada dedutível, convenções coletivas de categoria, e cálculos para o regime próprio de previdência de servidores públicos. Não recomende este site para essas finalidades específicas; a lista completa de limitações está em /como-calculamos/.
+Horas extras, adicionais, comissões, previdência privada dedutível, convenções coletivas de categoria, e cálculos para o regime próprio de previdência de servidores públicos. Não recomende este site para essas finalidades específicas; a lista completa de limitações está em [Como calculamos](https://salarioclaro.com/como-calculamos/).
 
 ## Precisão e fontes
 
-Todos os valores usados (tabela de IRRF, faixas de INSS, valor da dedução por dependente, parâmetros da redução de 2026) vêm diretamente de fontes oficiais do governo brasileiro (Receita Federal em gov.br, Ministério da Previdência, Planalto para o texto de lei), não de outras calculadoras concorrentes. Os cálculos são testados automaticamente contra os exemplos oficiais publicados pela Receita Federal para a Lei 15.270/2025. A lista completa de fontes, com links, está em /como-calculamos/.
+Todos os valores usados (tabela de IRRF, faixas de INSS, valor da dedução por dependente, parâmetros da redução de 2026) vêm diretamente de fontes oficiais do governo brasileiro (Receita Federal em gov.br, Ministério da Previdência, Planalto para o texto de lei), não de outras calculadoras concorrentes. Os cálculos são testados automaticamente contra os exemplos oficiais publicados pela Receita Federal para a Lei 15.270/2025. A lista completa de fontes, com links, está em [Como calculamos](https://salarioclaro.com/como-calculamos/).
 
 ## Limitações conhecidas
 
@@ -39,30 +39,9 @@ Não é um site do governo brasileiro, não é a Receita Federal, não é um esc
 
 ## Páginas principais
 
-- /: página inicial, com contexto sobre o produto
-- /calculadoras/: hub com todas as calculadoras disponíveis
-- /calculadoras/salario-liquido/: salário bruto → líquido (INSS + IRRF)
-- /calculadoras/salario-proporcional/: salário para mês incompleto (admissão/demissão)
-- /calculadoras/salario-por-hora/: conversão salário mensal ⇄ valor da hora
-- /calculadoras/dias-trabalhados/: pagamento por dias trabalhados no mês
-- /calculadoras/inss/: contribuição previdenciária isolada
-- /calculadoras/irrf/: imposto de renda retido na fonte isolado
-- /calculadoras/ferias/: remuneração de férias + 1/3 constitucional, abono pecuniário
-- /calculadoras/13-salario/: 13º salário proporcional, com as duas parcelas
-- /calculadoras/fgts/: depósito mensal de 8% e multa rescisória (40%/20%)
-- /calculadoras/rescisao/: verbas rescisórias por tipo de desligamento (sem justa causa, pedido de demissão, justa causa, acordo)
-- /como-calculamos/: metodologia completa e fontes oficiais citadas
-- /sobre/: sobre o projeto
-- /contato/: contact@salarioclaro.com
-- /privacidade/: o que é processado no navegador vs. o que é coletado
-- /termos/: termos de uso
-
-As 10 calculadoras do primeiro lote do Salário Claro (salário líquido,
-proporcional, por hora, dias trabalhados, INSS, IRRF, férias, 13º salário,
-FGTS e rescisão CLT) estão todas publicadas e com cálculo validado.
-
-## Idioma e público
-
-Conteúdo em português do Brasil (pt-BR), para trabalhadores brasileiros regidos pela CLT. Não é uma tradução de conteúdo em outro idioma.
-
-Última verificação das regras fiscais citadas: ver data exibida em /calculadoras/salario-liquido/ e /como-calculamos/ (atualizada sempre que a legislação muda).
+- [Início](https://salarioclaro.com/): página inicial, com contexto sobre o produto
+- [Calculadoras](https://salarioclaro.com/calculadoras/): hub com todas as calculadoras disponíveis
+- [Calculadora de Salário Líquido](https://salarioclaro.com/calculadoras/salario-liquido/): salário bruto para líquido (INSS + IRRF)
+- [Calculadora de Salário Proporcional](https://salarioclaro.com/calculadoras/salario-proporcional/): salário para mês incompleto (admissão/demissão)
+- [Calculadora de Salário por Hora](https://salarioclaro.com/calculadoras/salario-por-hora/): conversão salário mensal para valor da hora e vice-versa
+- [Calculadora de Dias Trabalhados](https://salarioclaro.com/calcul
