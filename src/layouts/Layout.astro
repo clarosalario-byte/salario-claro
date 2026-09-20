@@ -34,6 +34,31 @@ const allSchemas = structuredData;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content={robots} />
+    <script is:inline>
+      // The site is also reachable at its Cloudflare Pages preview domain
+      // (*.pages.dev) in addition to the real production domain. That's a
+      // duplicate-content risk if it ever gets crawled/indexed. The
+      // <link rel="canonical"> already points at the real domain on every
+      // page regardless of where it's served from, which is the primary
+      // signal — this script is a second, belt-and-suspenders layer: on
+      // any hostname other than the production domain, it forces a hard
+      // noindex, overriding the static robots meta above.
+      (function () {
+        var host = window.location.hostname;
+        var isProduction = host === 'salarioclaro.com' || host === 'www.salarioclaro.com';
+        if (!isProduction) {
+          var meta = document.querySelector('meta[name="robots"]');
+          if (meta) {
+            meta.setAttribute('content', 'noindex, nofollow');
+          } else {
+            meta = document.createElement('meta');
+            meta.name = 'robots';
+            meta.content = 'noindex, nofollow';
+            document.head.appendChild(meta);
+          }
+        }
+      })();
+    </script>
 
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -66,10 +91,39 @@ const allSchemas = structuredData;
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!--
+      Font loading, trimmed and non-render-blocking:
+      - Only the weights actually used are requested: Fraunces 600 (every
+        heading pairs font-display with font-semibold, nothing else — verified
+        across the whole codebase), IBM Plex Sans 400/500 (body text and
+        font-medium buttons/labels; 600/700 in that family are never used
+        since headings use Fraunces instead). IBM Plex Mono was declared as a
+        design token but never actually applied anywhere, so it's dropped
+        entirely — that was pure dead weight on every page load.
+      - The stylesheet itself is loaded with the standard preload+swap
+        pattern so it doesn't block initial render: the browser fetches it
+        at high priority (preload) without waiting on it to paint, then
+        applies it once ready. Combined with display=swap in the URL, text
+        renders immediately in the fallback font and swaps in without a
+        layout-blocking wait.
+    -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500&display=swap"
     />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500&display=swap"
+      media="print"
+      onload="this.media='all'"
+    />
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=IBM+Plex+Sans:wght@400;500&display=swap"
+      />
+    </noscript>
 
     {
       allSchemas.map((schema) => (
@@ -108,7 +162,7 @@ const allSchemas = structuredData;
     </script>
   </head>
   <body class="flex min-h-dvh flex-col bg-paper text-ink">
-    <a
+    
       href="#conteudo"
       class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
     >
@@ -159,7 +213,7 @@ const allSchemas = structuredData;
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z" />
             </svg>
           </button>
-          <a
+          
             href="/calculadoras/salario-liquido/"
             class="btn-primary rounded-md px-4 py-2 text-sm font-medium"
           >
